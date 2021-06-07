@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_k_chart/entity/candle_chart/candle_chart.dart';
 import 'package:flutter_k_chart/flutter_k_chart.dart';
 import 'package:flutter_k_chart/generated/l10n.dart' as k_chart;
 import 'package:flutter_k_chart/k_chart_widget.dart';
@@ -38,7 +39,9 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   List<KLineEntity>? datas;
-  List<DepthEntity>? _bids, _asks;
+  List<CandleChart>? datasBinance;
+
+  // List<DepthEntity>? _bids, _asks;
   List<int> maDayList = [10, 100, 1000];
 
   MainState _mainState = MainState.MA;
@@ -51,43 +54,43 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    getData('1day');
-    rootBundle.loadString('assets/depth.json').then((result) {
-      final parseJson = json.decode(result);
-      final tick = parseJson['tick'] as Map<String, dynamic>;
-      final List<DepthEntity> bids = (tick['bids'] as List<dynamic>)
-          .map<DepthEntity>(
-              (item) => DepthEntity(item[0] as double, item[1] as double))
-          .toList();
-      final List<DepthEntity> asks = (tick['asks'] as List<dynamic>)
-          .map((item) => DepthEntity(item[0] as double, item[1] as double))
-          .toList()
-          .cast<DepthEntity>();
-      initDepth(bids, asks);
-    });
+    getData();
+    // rootBundle.loadString('assets/depth.json').then((result) {
+    //   final parseJson = json.decode(result);
+    //   final tick = parseJson['tick'] as Map<String, dynamic>;
+    //   final List<DepthEntity> bids = (tick['bids'] as List<dynamic>)
+    //       .map<DepthEntity>(
+    //           (item) => DepthEntity(item[0] as double, item[1] as double))
+    //       .toList();
+    //   final List<DepthEntity> asks = (tick['asks'] as List<dynamic>)
+    //       .map((item) => DepthEntity(item[0] as double, item[1] as double))
+    //       .toList()
+    //       .cast<DepthEntity>();
+    //   initDepth(bids, asks);
+    // });
   }
 
-  void initDepth(List<DepthEntity>? bids, List<DepthEntity>? asks) {
-    if (bids == null || asks == null || bids.isEmpty || asks.isEmpty) return;
-    _bids = [];
-    _asks = [];
-    double amount = 0.0;
-    bids.sort((left, right) => left.price.compareTo(right.price));
-    for (final item in bids.reversed) {
-      amount += item.amount;
-      item.amount = amount;
-      _bids!.insert(0, item);
-    }
-
-    amount = 0.0;
-    asks.sort((left, right) => left.price.compareTo(right.price));
-    for (final item in asks) {
-      amount += item.amount;
-      item.amount = amount;
-      _asks!.add(item);
-    }
-    setState(() {});
-  }
+  // void initDepth(List<DepthEntity>? bids, List<DepthEntity>? asks) {
+  //   if (bids == null || asks == null || bids.isEmpty || asks.isEmpty) return;
+  //   _bids = [];
+  //   _asks = [];
+  //   double amount = 0.0;
+  //   bids.sort((left, right) => left.price.compareTo(right.price));
+  //   for (final item in bids.reversed) {
+  //     amount += item.amount;
+  //     item.amount = amount;
+  //     _bids!.insert(0, item);
+  //   }
+  //
+  //   amount = 0.0;
+  //   asks.sort((left, right) => left.price.compareTo(right.price));
+  //   for (final item in asks) {
+  //     amount += item.amount;
+  //     item.amount = amount;
+  //     _asks!.add(item);
+  //   }
+  //   setState(() {});
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -206,7 +209,7 @@ class _MyHomePageState extends State<MyHomePage> {
         button('1Day', onPressed: () {
           showLoading = true;
           setState(() {});
-          getData('1day');
+          getData(period: '1day');
         }),
       ],
     );
@@ -233,10 +236,49 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void getData(String period) async {
+  void getData({String? symbol, String? period}) async {
     late String result;
     try {
-      result = await getIPAddress(period);
+      result = await getIPAddress(symbol: symbol, period: period);
+    } catch (e) {
+      print('Không lấy được dữ liệu, lấy dữ liệu cục bộ');
+      result = await rootBundle.loadString('assets/kline.json');
+    } finally {
+      final list = json.decode(result) as List<dynamic>;
+      // final list = parseJson['data'] as List<dynamic>;
+
+      datasBinance = list
+          .map((item) => CandleChart.fromApi(item))
+          .toList()
+          .reversed
+          .toList()
+          .cast<CandleChart>();
+      DataUtil.calculate(datasBinance, maDayList);
+      showLoading = false;
+      setState(() {});
+    }
+  }
+
+  Future<String> getIPAddress({String? symbol, String? period}) async {
+    final houbi =
+        'https://api.huobi.br.com/market/history/kline?period=${period ?? '1day'}&size=300&symbol=btcusdt';
+    final binance =
+        'https://fapi.binance.com/fapi/v1/klines?symbol=${symbol ?? 'btcusdt'}&interval=${period ?? '1M'}';
+    String result;
+    final response =
+        await http.get(Uri.parse(binance)).timeout(const Duration(seconds: 7));
+    if (response.statusCode == 200) {
+      result = response.body;
+    } else {
+      return Future.error('Nhận thất bại');
+    }
+    return result;
+  }
+
+  void getDataHb({String? symbol, String? period}) async {
+    late String result;
+    try {
+      result = await getIPAddress(symbol: symbol, period: period);
     } catch (e) {
       print('Không lấy được dữ liệu, lấy dữ liệu cục bộ');
       result = await rootBundle.loadString('assets/kline.json');
@@ -255,13 +297,15 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  Future<String> getIPAddress(String? period) async {
+  Future<String> getIPAddressHb({String? symbol, String? period}) async {
     //Huobi api, cần khắc phục bức tường
-    final url =
+    final houbi =
         'https://api.huobi.br.com/market/history/kline?period=${period ?? '1day'}&size=300&symbol=btcusdt';
+    final binance =
+        'https://fapi.binance.com/fapi/v1/klines?symbol=${symbol ?? 'btcusdt'}&interval=${period ?? '1M'}';
     String result;
     final response =
-        await http.get(Uri.parse(url)).timeout(const Duration(seconds: 7));
+        await http.get(Uri.parse(houbi)).timeout(const Duration(seconds: 7));
     if (response.statusCode == 200) {
       result = response.body;
     } else {
