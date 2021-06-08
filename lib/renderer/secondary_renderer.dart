@@ -1,9 +1,9 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+
 import '../entity/macd_entity.dart';
 import '../k_chart_widget.dart' show SecondaryState;
-
 import 'base_chart_renderer.dart';
 
 class SecondaryRenderer extends BaseChartRenderer<MACDEntity> {
@@ -47,7 +47,12 @@ class SecondaryRenderer extends BaseChartRenderer<MACDEntity> {
           drawLine(lastPoint.r!, curPoint.r!, canvas, lastX, curX,
               ChartColors.rsiColor);
         break;
-      default:
+
+      case SecondaryState.CCI:
+        drawLine(lastPoint.cci!, curPoint.cci!, canvas, lastX, curX,
+            ChartColors.rsiColor);
+        break;
+      case SecondaryState.NONE:
         break;
     }
   }
