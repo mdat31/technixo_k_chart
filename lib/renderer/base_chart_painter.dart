@@ -1,13 +1,16 @@
 import 'dart:math';
-export 'package:flutter/material.dart'
-    show Color, required, TextStyle, Rect, Canvas, Size, CustomPainter;
+
 import 'package:flutter/material.dart'
     show Color, TextStyle, Rect, Canvas, Size, CustomPainter;
-import 'package:flutter_k_chart/utils/date_format_util.dart';
-import 'package:flutter_k_chart/utils/number_util.dart';
+import 'package:technixo_k_chart/utils/date_format_util.dart';
+import 'package:technixo_k_chart/utils/number_util.dart';
+
+import '../chart_style.dart' show ChartStyle;
 import '../entity/k_line_entity.dart';
 import '../k_chart_widget.dart';
-import '../chart_style.dart' show ChartStyle;
+
+export 'package:flutter/material.dart'
+    show Color, required, TextStyle, Rect, Canvas, Size, CustomPainter;
 
 abstract class BaseChartPainter extends CustomPainter {
   static double maxScrollX = 0.0;

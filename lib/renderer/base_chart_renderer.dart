@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_k_chart/chart_style.dart';
-import 'package:flutter_k_chart/utils/number_util.dart';
+import 'package:technixo_k_chart/chart_style.dart';
+import 'package:technixo_k_chart/utils/number_util.dart';
+
 export '../chart_style.dart';
 
 abstract class BaseChartRenderer<T> {
