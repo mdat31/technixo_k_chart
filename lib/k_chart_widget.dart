@@ -12,22 +12,25 @@ import 'utils/date_format_util.dart' hide S;
 import 'utils/number_util.dart';
 
 enum MainState { MA, BOLL, NONE }
-enum VolState { VOL, NONE }
 enum SecondaryState { MACD, KDJ, RSI, WR, NONE }
 
 class KChartWidget extends StatefulWidget {
   final List<KLineEntity> datas;
   final MainState mainState;
-  final VolState volState;
+  final bool volHidden;
   final SecondaryState secondaryState;
   final bool isLine;
+  final List<int> maDayList;
+  final List<Color>? bgColor;
 
   KChartWidget(
     this.datas, {
     this.mainState = MainState.MA,
-    this.volState = VolState.VOL,
+    this.volHidden = false,
     this.secondaryState = SecondaryState.MACD,
     this.isLine = false,
+    this.maDayList = const [5, 10, 20],
+    this.bgColor,
     int fractionDigits = 2,
   }) {
     NumberUtil.fractionDigits = fractionDigits;
@@ -183,18 +186,21 @@ class _KChartWidgetState extends State<KChartWidget>
           CustomPaint(
             size: const Size(double.infinity, double.infinity),
             painter: ChartPainter(
-                datas: widget.datas,
-                scaleX: mScaleX,
-                scrollX: mScrollX,
-                selectX: mSelectX,
-                isLongPass: isLongPress,
-                mainState: widget.mainState,
-                volState: widget.volState,
-                secondaryState: widget.secondaryState,
-                isLine: widget.isLine,
-                sink: mInfoWindowStream.sink,
-                opacity: _animation.value,
-                controller: _controller),
+              datas: widget.datas,
+              scaleX: mScaleX,
+              scrollX: mScrollX,
+              selectX: mSelectX,
+              isLongPass: isLongPress,
+              mainState: widget.mainState,
+              volHidden: widget.volHidden,
+              secondaryState: widget.secondaryState,
+              isLine: widget.isLine,
+              sink: mInfoWindowStream.sink,
+              opacity: _animation.value,
+              controller: _controller,
+              bgColor: widget.bgColor,
+              maDayList: widget.maDayList,
+            ),
           ),
           _buildInfoDialog()
         ],

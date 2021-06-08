@@ -42,7 +42,9 @@ class _MyHomePageState extends State<MyHomePage> {
   MainState _mainState = MainState.MA;
   SecondaryState _secondaryState = SecondaryState.MACD;
   bool isLine = true;
+  bool volHidden = false;
   List<DepthEntity> _bids = [], _asks = [];
+  List<int> maDayList = const [10, 100, 1000];
 
   @override
   void initState() {
@@ -91,7 +93,6 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xff17212F),
-//      appBar: AppBar(title: Text(widget.title)),
       body: ListView(
         children: <Widget>[
           Stack(children: <Widget>[
@@ -104,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 isLine: isLine,
                 mainState: _mainState,
                 secondaryState: _secondaryState,
-                volState: VolState.VOL,
+                volHidden: volHidden,
                 fractionDigits: 4,
               ),
             ),
@@ -132,6 +133,7 @@ class _MyHomePageState extends State<MyHomePage> {
       spacing: 5,
       children: <Widget>[
         button("kLine", onPressed: () => isLine = !isLine),
+        button("vol", onPressed: () => volHidden = !volHidden),
         button("MA", onPressed: () => _mainState = MainState.MA),
         button("BOLL", onPressed: () => _mainState = MainState.BOLL),
         button("隐藏",

@@ -1,10 +1,10 @@
 import 'dart:async' show StreamSink;
 
 import 'package:flutter/material.dart';
+
+import '../entity/info_window_entity.dart';
 import '../entity/k_line_entity.dart';
 import '../utils/date_format_util.dart';
-import '../entity/info_window_entity.dart';
-
 import 'base_chart_painter.dart';
 import 'base_chart_renderer.dart';
 import 'main_renderer.dart';
@@ -18,35 +18,49 @@ class ChartPainter extends BaseChartPainter {
   StreamSink<InfoWindowEntity?>? sink;
   AnimationController? controller;
   double opacity;
+  List<int> maDayList;
+  List<Color>? bgColor;
 
-  ChartPainter(
-      {required datas,
-      required scaleX,
-      required scrollX,
-      required isLongPass,
-      required selectX,
-      mainState,
-      volState,
-      secondaryState,
-      this.sink,
-      bool isLine = false,
-      this.controller,
-      this.opacity = 0.0})
-      : super(
-            datas: datas,
-            scaleX: scaleX,
-            scrollX: scrollX,
-            isLongPress: isLongPass,
-            selectX: selectX,
-            mainState: mainState,
-            volState: volState,
-            secondaryState: secondaryState,
-            isLine: isLine);
+  ChartPainter({
+    required datas,
+    required scaleX,
+    required scrollX,
+    required isLongPass,
+    required selectX,
+    mainState,
+    volHidden,
+    secondaryState,
+    this.sink,
+    bool isLine = false,
+    this.controller,
+    this.opacity = 0.0,
+    this.bgColor,
+    this.maDayList = const [5, 10, 20],
+  })  : assert(bgColor == null || bgColor.length >= 2),
+        super(
+          datas: datas,
+          scaleX: scaleX,
+          scrollX: scrollX,
+          isLongPress: isLongPass,
+          selectX: selectX,
+          mainState: mainState,
+          volHidden: volHidden,
+          secondaryState: secondaryState,
+          isLine: isLine,
+        );
 
   @override
   void initChartRenderer() {
-    mMainRenderer = MainRenderer(mMainRect, mMainMaxValue, mMainMinValue,
-        ChartStyle.topPadding, mainState, isLine, scaleX);
+    mMainRenderer = MainRenderer(
+      mMainRect,
+      mMainMaxValue,
+      mMainMinValue,
+      ChartStyle.topPadding,
+      mainState,
+      isLine,
+      scaleX,
+      maDayList,
+    );
     if (mVolRect != null) {
       mVolRenderer ??= VolRenderer(mVolRect!, mVolMaxValue, mVolMinValue,
           ChartStyle.childPadding, scaleX);
@@ -62,12 +76,18 @@ class ChartPainter extends BaseChartPainter {
     }
   }
 
-  final Paint mBgPaint = Paint()..color = ChartColors.bgColor;
-
   @override
   void drawBg(Canvas canvas, Size size) {
     Rect mainRect = Rect.fromLTRB(
         0, 0, mMainRect.width, mMainRect.height + ChartStyle.topPadding);
+    Gradient mBgGradient = LinearGradient(
+      begin: Alignment.bottomCenter,
+      end: Alignment.topCenter,
+      colors: bgColor ?? [Color(0xff18191d), Color(0xff18191d)],
+    );
+    final Paint mBgPaint = bgColor != null
+        ? (Paint()..shader = mBgGradient.createShader(mainRect))
+        : (Paint()..color = ChartColors.bgColor);
     canvas.drawRect(mainRect, mBgPaint);
 
     if (mVolRect != null) {
@@ -91,8 +111,7 @@ class ChartPainter extends BaseChartPainter {
 
   @override
   void drawGrid(canvas) {
-    mMainRenderer.drawGrid(
-        canvas, ChartStyle.gridRows, ChartStyle.gridColumns);
+    mMainRenderer.drawGrid(canvas, ChartStyle.gridRows, ChartStyle.gridColumns);
     mVolRenderer?.drawGrid(canvas, ChartStyle.gridRows, ChartStyle.gridColumns);
     mSecondaryRenderer?.drawGrid(
         canvas, ChartStyle.gridRows, ChartStyle.gridColumns);
@@ -200,7 +219,8 @@ class ChartPainter extends BaseChartPainter {
       tp.paint(canvas, Offset(x + w1 + w2, y - textHeight / 2));
     }
 
-    TextPainter dateTp = getTextPainter(getDate(point.id!), color: Colors.white);
+    TextPainter dateTp =
+        getTextPainter(getDate(point.id!), color: Colors.white);
     textWidth = dateTp.width;
     r = textHeight / 2;
     x = translateXtoX(getX(index));
@@ -332,10 +352,8 @@ class ChartPainter extends BaseChartPainter {
       //画一闪一闪
       if (isLine) {
         startAnimation();
-        Gradient pointGradient = RadialGradient(colors: [
-          Colors.white.withOpacity(opacity),
-          Colors.transparent
-        ]);
+        Gradient pointGradient = RadialGradient(
+            colors: [Colors.white.withOpacity(opacity), Colors.transparent]);
         pointPaint.shader = pointGradient
             .createShader(Rect.fromCircle(center: Offset(x, y), radius: 14.0));
         canvas.drawCircle(Offset(x, y), 14.0, pointPaint);

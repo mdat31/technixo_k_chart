@@ -16,7 +16,7 @@ abstract class BaseChartPainter extends CustomPainter {
   static double maxScrollX = 0.0;
   List<KLineEntity> datas;
   MainState mainState;
-  VolState volState;
+  bool volHidden;
   SecondaryState secondaryState;
 
   double scaleX = 1.0, scrollX = 0.0, selectX;
@@ -43,16 +43,17 @@ abstract class BaseChartPainter extends CustomPainter {
   List<String> mFormats = [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn]; //格式化时间
   double mMarginRight = 0.0; //k线右边空出来的距离
 
-  BaseChartPainter(
-      {required this.datas,
-      required this.scaleX,
-      required this.scrollX,
-      required this.isLongPress,
-      required this.selectX,
-      this.mainState = MainState.MA,
-      this.volState = VolState.VOL,
-      this.secondaryState = SecondaryState.MACD,
-      this.isLine = false}) {
+  BaseChartPainter({
+    required this.datas,
+    required this.scaleX,
+    required this.scrollX,
+    required this.isLongPress,
+    required this.selectX,
+    this.mainState = MainState.MA,
+    this.volHidden = false,
+    this.secondaryState = SecondaryState.MACD,
+    this.isLine = false,
+  }) {
     mItemCount = datas.length;
     mDataLen = mItemCount * mPointWidth;
     initFormats();
@@ -132,15 +133,14 @@ abstract class BaseChartPainter extends CustomPainter {
     double mainHeight = mDisplayHeight * 0.6;
     double volHeight = mDisplayHeight * 0.2;
     double secondaryHeight = mDisplayHeight * 0.2;
-    if (volState == VolState.NONE && secondaryState == SecondaryState.NONE) {
+    if (volHidden && secondaryState == SecondaryState.NONE) {
       mainHeight = mDisplayHeight;
-    } else if (volState == VolState.NONE ||
-        secondaryState == SecondaryState.NONE) {
+    } else if (volHidden || secondaryState == SecondaryState.NONE) {
       mainHeight = mDisplayHeight * 0.8;
     }
     mMainRect = Rect.fromLTRB(
         0, ChartStyle.topPadding, mWidth, ChartStyle.topPadding + mainHeight);
-    if (volState != VolState.NONE) {
+    if (!volHidden) {
       mVolRect = Rect.fromLTRB(0, mMainRect.bottom + ChartStyle.childPadding,
           mWidth, mMainRect.bottom + volHeight);
     }
@@ -174,29 +174,11 @@ abstract class BaseChartPainter extends CustomPainter {
     } else {
       double maxPrice = item.high, minPrice = item.low;
       if (mainState == MainState.MA) {
-        if (item.MA5Price != 0) {
-          maxPrice = max(maxPrice, item.MA5Price!);
-          minPrice = min(minPrice, item.MA5Price!);
-        }
-        if (item.MA10Price != 0) {
-          maxPrice = max(maxPrice, item.MA10Price!);
-          minPrice = min(minPrice, item.MA10Price!);
-        }
-        if (item.MA20Price != 0) {
-          maxPrice = max(maxPrice, item.MA20Price!);
-          minPrice = min(minPrice, item.MA20Price!);
-        }
-        if (item.MA30Price != 0) {
-          maxPrice = max(maxPrice, item.MA30Price!);
-          minPrice = min(minPrice, item.MA30Price!);
-        }
+        maxPrice = max(item.high, _findMaxMA(item.maValueList ?? [0]));
+        minPrice = min(item.low, _findMinMA(item.maValueList ?? [0]));
       } else if (mainState == MainState.BOLL) {
-        if (item.up != 0) {
-          maxPrice = max(item.up!, item.high);
-        }
-        if (item.dn != 0) {
-          minPrice = min(item.dn!, item.low);
-        }
+        maxPrice = max(item.up ?? 0, item.high);
+        minPrice = min(item.dn ?? 0, item.low);
       }
       mMainMaxValue = max(mMainMaxValue, maxPrice);
       mMainMinValue = min(mMainMinValue, minPrice);
@@ -210,6 +192,22 @@ abstract class BaseChartPainter extends CustomPainter {
         mMainMinIndex = i;
       }
     }
+  }
+
+  double _findMaxMA(List<double> a) {
+    double result = double.minPositive;
+    for (double i in a) {
+      result = max(result, i);
+    }
+    return result;
+  }
+
+  double _findMinMA(List<double> a) {
+    double result = double.maxFinite;
+    for (double i in a) {
+      result = min(result, i == 0 ? double.maxFinite : i);
+    }
+    return result;
   }
 
   void getVolMaxMinValue(KLineEntity item) {

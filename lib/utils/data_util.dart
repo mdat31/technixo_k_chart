@@ -3,7 +3,11 @@ import 'dart:math';
 import '../entity/k_line_entity.dart';
 
 class DataUtil {
-  static calculate(List<KLineEntity> dataList) {
+  static List<int> maDayList = const [5, 10, 20];
+
+  static calculate(List<KLineEntity> dataList,
+      {List<int> list = const [5, 10, 20]}) {
+    DataUtil.maDayList = list;
     _calcMA(dataList);
     _calcBOLL(dataList);
     _calcVolumeMA(dataList);
@@ -13,76 +17,95 @@ class DataUtil {
     _calcWR(dataList);
   }
 
-  static _calcMA(List<KLineEntity> dataList, [bool isLast = false]) {
-    double ma5 = 0;
-    double ma10 = 0;
-    double ma20 = 0;
-    double ma30 = 0;
-//    double ma60 = 0;
+  static _calcMA(List<KLineEntity> dataList, {bool isLast = false}) {
+    if (dataList.isNotEmpty) {
+      int i = 0;
+      List<double> ma = List<double>.filled(maDayList.length, 0);
+      // if (isLast && dataList.length > ma.last) {
+      //   i = dataList.length - 1;
+      //   var data = dataList[i - 1];
+      //   for (int i = 0; i < ma.length; i++) {
+      //     ma[i] = data.maValueList![i] * ma[i];
+      //   }
+      // }
 
-    int i = 0;
-    if (isLast && dataList.length > 30) {
-      i = dataList.length - 1;
-      var data = dataList[dataList.length - 2];
-      ma5 = data.MA5Price! * 5;
-      ma10 = data.MA10Price! * 10;
-      ma20 = data.MA20Price! * 20;
-      ma30 = data.MA30Price! * 30;
-//      ma60 = data.MA60Price * 60;
-    }
-    for (; i < dataList.length; i++) {
-      KLineEntity entity = dataList[i];
-      final closePrice = entity.close;
-      ma5 += closePrice;
-      ma10 += closePrice;
-      ma20 += closePrice;
-      ma30 += closePrice;
-//      ma60 += closePrice;
+      for (; i < dataList.length; i++) {
+        KLineEntity entity = dataList[i];
+        final closePrice = entity.close;
+        entity.maValueList = List<double>.filled(maDayList.length, 0);
 
-      if (i == 4) {
-        entity.MA5Price = ma5 / 5;
-      } else if (i >= 5) {
-        ma5 -= dataList[i - 5].close;
-        entity.MA5Price = ma5 / 5;
-      } else {
-        entity.MA5Price = 0;
+        for (int j = 0; j < maDayList.length; j++) {
+          ma[j] += closePrice;
+          if (i == maDayList[j] - 1) {
+            entity.maValueList?[j] = ma[j] / maDayList[j];
+          } else if (i >= maDayList[j]) {
+            ma[j] -= dataList[i - maDayList[j]].close;
+            entity.maValueList?[j] = ma[j] / maDayList[j];
+          } else {
+            entity.maValueList?[j] = 0;
+          }
+        }
       }
-      if (i == 9) {
-        entity.MA10Price = ma10 / 10;
-      } else if (i >= 10) {
-        ma10 -= dataList[i - 10].close;
-        entity.MA10Price = ma10 / 10;
-      } else {
-        entity.MA10Price = 0;
-      }
-      if (i == 19) {
-        entity.MA20Price = ma20 / 20;
-      } else if (i >= 20) {
-        ma20 -= dataList[i - 20].close;
-        entity.MA20Price = ma20 / 20;
-      } else {
-        entity.MA20Price = 0;
-      }
-      if (i == 29) {
-        entity.MA30Price = ma30 / 30;
-      } else if (i >= 30) {
-        ma30 -= dataList[i - 30].close;
-        entity.MA30Price = ma30 / 30;
-      } else {
-        entity.MA30Price = 0;
-      }
-//      if (i == 59) {
-//        entity.MA60Price = ma60 / 60;
-//      } else if (i >= 60) {
-//        ma60 -= dataList[i - 60].close;
-//        entity.MA60Price = ma60 / 60;
-//      } else {
-//        entity.MA60Price = 0;
-//      }
     }
+
+    // double ma5 = 0;
+    // double ma10 = 0;
+    // double ma20 = 0;
+    // double ma30 = 0;
+    // int i = 0;
+    // if (isLast && dataList.length > 30) {
+    //   i = dataList.length - 1;
+    //   var data = dataList[dataList.length - 2];
+    //   ma5 = data.MA5Price! * 5;
+    //   ma10 = data.MA10Price! * 10;
+    //   ma20 = data.MA20Price! * 20;
+    //   ma30 = data.MA30Price! * 30;
+    // }
+    //
+    // for (; i < dataList.length; i++) {
+    //   KLineEntity entity = dataList[i];
+    //   final closePrice = entity.close;
+    //   ma5 += closePrice;
+    //   ma10 += closePrice;
+    //   ma20 += closePrice;
+    //   ma30 += closePrice;
+    //   if (i == 4) {
+    //     entity.MA5Price = ma5 / 5;
+    //   } else if (i >= 5) {
+    //     ma5 -= dataList[i - 5].close;
+    //     entity.MA5Price = ma5 / 5;
+    //   } else {
+    //     entity.MA5Price = 0;
+    //   }
+    //   if (i == 9) {
+    //     entity.MA10Price = ma10 / 10;
+    //   } else if (i >= 10) {
+    //     ma10 -= dataList[i - 10].close;
+    //     entity.MA10Price = ma10 / 10;
+    //   } else {
+    //     entity.MA10Price = 0;
+    //   }
+    //   if (i == 19) {
+    //     entity.MA20Price = ma20 / 20;
+    //   } else if (i >= 20) {
+    //     ma20 -= dataList[i - 20].close;
+    //     entity.MA20Price = ma20 / 20;
+    //   } else {
+    //     entity.MA20Price = 0;
+    //   }
+    //   if (i == 29) {
+    //     entity.MA30Price = ma30 / 30;
+    //   } else if (i >= 30) {
+    //     ma30 -= dataList[i - 30].close;
+    //     entity.MA30Price = ma30 / 30;
+    //   } else {
+    //     entity.MA30Price = 0;
+    //   }
+    // }
   }
 
   static void _calcBOLL(List<KLineEntity> dataList, [bool isLast = false]) {
+    _calcBOLLMA(20, dataList);
     int i = 0;
     if (isLast && dataList.length > 1) {
       i = dataList.length - 1;
@@ -98,15 +121,31 @@ class DataUtil {
         double md = 0;
         for (int j = i - n + 1; j <= i; j++) {
           double c = dataList[j].close;
-          double m = entity.MA20Price!;
+          double m = entity.BOLLMA!;
           double value = c - m;
           md += value * value;
         }
         md = md / (n - 1);
         md = sqrt(md);
-        entity.mb = entity.MA20Price;
+        entity.mb = entity.BOLLMA;
         entity.up = entity.mb! + 2.0 * md;
         entity.dn = entity.mb! - 2.0 * md;
+      }
+    }
+  }
+
+  static void _calcBOLLMA(int day, List<KLineEntity> dataList) {
+    double ma = 0;
+    for (int i = 0; i < dataList.length; i++) {
+      KLineEntity entity = dataList[i];
+      ma += entity.close;
+      if (i == day - 1) {
+        entity.BOLLMA = ma / day;
+      } else if (i >= day) {
+        ma -= dataList[i - day].close;
+        entity.BOLLMA = ma / day;
+      } else {
+        entity.BOLLMA = null;
       }
     }
   }
@@ -315,7 +354,7 @@ class DataUtil {
   //增量更新时计算最后一个数据
   static addLastData(List<KLineEntity> dataList, KLineEntity data) {
     dataList.add(data);
-    _calcMA(dataList, true);
+    _calcMA(dataList, isLast: true);
     _calcBOLL(dataList, true);
     _calcVolumeMA(dataList, true);
     _calcKDJ(dataList, true);
@@ -326,7 +365,7 @@ class DataUtil {
 
   //更新最后一条数据
   static updateLastData(List<KLineEntity> dataList) {
-    _calcMA(dataList, true);
+    _calcMA(dataList, isLast: true);
     _calcBOLL(dataList, true);
     _calcVolumeMA(dataList, true);
     _calcKDJ(dataList, true);
