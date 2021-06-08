@@ -40,9 +40,9 @@ class _MyHomePageState extends State<MyHomePage> {
   List<KLineEntity> datas = [];
   bool showLoading = true;
   MainState _mainState = MainState.MA;
-  SecondaryState _secondaryState = SecondaryState.MACD;
-  bool isLine = true;
-  bool volHidden = false;
+  SecondaryState _secondaryState = SecondaryState.NONE;
+  bool isLine = false;
+  bool volHidden = true;
   List<DepthEntity> _bids = [], _asks = [];
   List<int> maDayList = const [10, 100, 1000];
 
@@ -71,7 +71,6 @@ class _MyHomePageState extends State<MyHomePage> {
     _asks = [];
     double amount = 0.0;
     bids.sort((left, right) => left.price.compareTo(right.price));
-    //倒序循环 //累加买入委托量
     bids.reversed.forEach((item) {
       amount += item.amount;
       item.amount = amount;
@@ -80,7 +79,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
     amount = 0.0;
     asks.sort((left, right) => left.price.compareTo(right.price));
-    //循环 //累加买入委托量
     asks.forEach((item) {
       amount += item.amount;
       item.amount = amount;
@@ -133,22 +131,6 @@ class _MyHomePageState extends State<MyHomePage> {
       alignment: WrapAlignment.spaceEvenly,
       spacing: 5,
       children: <Widget>[
-        button("kLine", onPressed: () => isLine = !isLine),
-        button("vol", onPressed: () => volHidden = !volHidden),
-        button("MA", onPressed: () => _mainState = MainState.MA),
-        button("BOLL", onPressed: () => _mainState = MainState.BOLL),
-        button("隐藏",
-            onPressed: () => _mainState =
-                _mainState == MainState.NONE ? MainState.MA : MainState.NONE),
-        button("MACD", onPressed: () => _secondaryState = SecondaryState.MACD),
-        button("KDJ", onPressed: () => _secondaryState = SecondaryState.KDJ),
-        button("RSI", onPressed: () => _secondaryState = SecondaryState.RSI),
-        button("WR", onPressed: () => _secondaryState = SecondaryState.WR),
-        button("隐藏副视图",
-            onPressed: () => _secondaryState =
-                _secondaryState == SecondaryState.NONE
-                    ? SecondaryState.MACD
-                    : SecondaryState.NONE),
         button("update", onPressed: () {
           //更新最后一条数据
           datas.last.close += (Random().nextInt(100) - 50).toDouble();
@@ -166,19 +148,6 @@ class _MyHomePageState extends State<MyHomePage> {
           datas.last.low = min(datas.last.low, datas.last.close);
           debugPrint('### ${datas.last.toJson()}');
           DataUtil.addLastData(datas, kLineEntity);
-        }),
-        button("1month", onPressed: () async {
-          //getData('1mon');
-          String result = await rootBundle.loadString('assets/kmon.json');
-          Map parseJson = json.decode(result);
-          List list = parseJson['data'];
-          datas = list
-              .map((item) => KLineEntity.fromJson(item))
-              .toList()
-              .reversed
-              .toList()
-              .cast<KLineEntity>();
-          DataUtil.calculate(datas, maDayList: maDayList);
         }),
         TextButton(
             onPressed: () {
