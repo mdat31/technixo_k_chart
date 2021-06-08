@@ -1,3 +1,5 @@
+import 'dart:math';
+
 class NumberUtil {
   static String volFormat(double n) {
     if (n > 10000 && n < 999999) {
@@ -19,5 +21,22 @@ class NumberUtil {
 
   static String format(double price) {
     return price.toStringAsFixed(_fractionDigits);
+  }
+
+  static int getMaxDecimalLength(double a, double b, double c, double d) {
+    int result = max(_getDecimalLength(a), _getDecimalLength(b));
+    result = max(result, _getDecimalLength(c));
+    result = max(result, _getDecimalLength(d));
+    return result;
+  }
+
+  static int _getDecimalLength(double b) {
+    String s = b.toString();
+    int dotIndex = s.indexOf(".");
+    if (dotIndex < 0) {
+      return 0;
+    } else {
+      return s.length - dotIndex - 1;
+    }
   }
 }

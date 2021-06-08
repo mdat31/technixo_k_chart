@@ -78,7 +78,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     for (int i = 0; i < (data.maValueList?.length ?? 0); i++) {
       if (data.maValueList?[i] != 0) {
         var item = TextSpan(
-            text: "MA${maDayList[i]}:${format(data.maValueList![i])}    ",
+            text: "MA(${maDayList[i]}):${format(data.maValueList![i])}    ",
             style: getTextStyle(chartColors[i]));
         result.add(item);
       }
@@ -151,8 +151,17 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
       double lastX, double curX) {
     for (int i = 0; i < (curPoint.maValueList?.length ?? 0); i++) {
       if (lastPoint.maValueList?[i] != 0) {
-        drawLine(lastPoint.maValueList![i], curPoint.maValueList![i], canvas,
-            lastX, curX, ChartColors.ma10Color);
+        drawLine(
+            lastPoint.maValueList![i],
+            curPoint.maValueList![i],
+            canvas,
+            lastX,
+            curX,
+            [
+              ChartColors.ma5Color,
+              ChartColors.ma10Color,
+              ChartColors.ma30Color,
+            ][i]);
       }
     }
   }

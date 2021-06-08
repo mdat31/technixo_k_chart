@@ -106,7 +106,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 mainState: _mainState,
                 secondaryState: _secondaryState,
                 volHidden: volHidden,
-                fractionDigits: 4,
+                fractionDigits: 2,
+                maDayList: maDayList,
               ),
             ),
             if (showLoading)
@@ -163,6 +164,7 @@ class _MyHomePageState extends State<MyHomePage> {
           kLineEntity.close += (Random().nextInt(100) - 50).toDouble();
           datas.last.high = max(datas.last.high, datas.last.close);
           datas.last.low = min(datas.last.low, datas.last.close);
+          debugPrint('### ${datas.last.toJson()}');
           DataUtil.addLastData(datas, kLineEntity);
         }),
         button("1month", onPressed: () async {
@@ -176,7 +178,7 @@ class _MyHomePageState extends State<MyHomePage> {
               .reversed
               .toList()
               .cast<KLineEntity>();
-          DataUtil.calculate(datas);
+          DataUtil.calculate(datas, maDayList: maDayList);
         }),
         TextButton(
             onPressed: () {
@@ -224,7 +226,7 @@ class _MyHomePageState extends State<MyHomePage> {
         List parseJson = json.decode(result);
         datas = parseJson.map((item) => KLineEntity.fromApi(item)).toList();
       } finally {
-        DataUtil.calculate(datas);
+        DataUtil.calculate(datas, maDayList: maDayList);
         showLoading = false;
         setState(() {});
       }
