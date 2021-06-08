@@ -20,13 +20,13 @@ Demo v0.1.0：[下载 APK](https://github.com/415593725/flutter_k_chart/blob/mas
 ```yaml
 //本地导入方式
 dependencies:
-  flutter_k_chart:
+  technixo_k_chart:
     path: 项目路径
 ```
 
 #### 2.在布局文件中添加
 ```dart
-import 'package:flutter_k_chart/flutter_k_chart.dart';
+import 'package:technixo_k_chart/technixo_k_chart.dart';
 ....
 Container(
   height: 450,
@@ -63,7 +63,7 @@ DataUtil.addLastData(datas,kLineEntity);
 
 #### 国际化 l10n
 ```dart
-import 'package:flutter_k_chart/generated/l10n.dart' as k_chart;
+import 'package:technixo_k_chart/generated/l10n.dart' as k_chart;
 MaterialApp(
       localizationsDelegates: [
         k_chart.S.delegate//国际化
@@ -71,7 +71,7 @@ MaterialApp(
 );
 ```
 
-#### 5.[修改日志](https://github.com/415593725/flutter_k_chart/blob/master/CHANGELOG.md)
+#### 5.[修改日志](https://github.com/mdat31/technixo_k_chart/blob/main/README.md)
 
 ## 问题
 使用中如果有问题可以加QQ群：114563912
