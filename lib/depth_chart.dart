@@ -39,7 +39,8 @@ class _DepthChartState extends State<DepthChart> {
       },
       child: CustomPaint(
         size: Size(double.infinity, double.infinity),
-        painter: DepthChartPainter(widget.bids, widget.asks, pressOffset, isLongPress),
+        painter: DepthChartPainter(
+            widget.bids, widget.asks, pressOffset, isLongPress),
       ),
     );
   }
@@ -272,8 +273,8 @@ class DepthChartPainter extends CustomPainter {
     } else {
       left = dx - priceTP.width / 2;
     }
-    Rect bottomRect =
-        Rect.fromLTRB(left - 3, mDrawHeight + 3, left + priceTP.width + 3, mDrawHeight + mPaddingBottom);
+    Rect bottomRect = Rect.fromLTRB(left - 3, mDrawHeight + 3,
+        left + priceTP.width + 3, mDrawHeight + mPaddingBottom);
     canvas.drawRect(bottomRect, selectPaint);
     canvas.drawRect(bottomRect, selectBorderPaint);
     priceTP.paint(
@@ -292,8 +293,8 @@ class DepthChartPainter extends CustomPainter {
     } else {
       rightRectTop = y - amountTP.height / 2;
     }
-    Rect rightRect = Rect.fromLTRB(
-        mWidth - amountTP.width - 6, rightRectTop - 3, mWidth, rightRectTop + amountTP.height + 3);
+    Rect rightRect = Rect.fromLTRB(mWidth - amountTP.width - 6,
+        rightRectTop - 3, mWidth, rightRectTop + amountTP.height + 3);
     canvas.drawRect(rightRect, selectPaint);
     canvas.drawRect(rightRect, selectBorderPaint);
     amountTP.paint(
@@ -310,7 +311,9 @@ class DepthChartPainter extends CustomPainter {
     if (end - start == 1) {
       double startValue = getX(start);
       double endValue = getX(end);
-      return (translateX - startValue).abs() < (translateX - endValue).abs() ? start : end;
+      return (translateX - startValue).abs() < (translateX - endValue).abs()
+          ? start
+          : end;
     }
     int mid = start + (end - start) ~/ 2;
     double midValue = getX(mid);
@@ -328,12 +331,15 @@ class DepthChartPainter extends CustomPainter {
   double getSellX(int position) => position * mSellPointWidth + mDrawWidth;
 
   getTextPainter(String text, [Color color = Colors.white]) => TextPainter(
-      text: TextSpan(text: "$text", style: TextStyle(color: color, fontSize: 10)),
+      text:
+          TextSpan(text: "$text", style: TextStyle(color: color, fontSize: 10)),
       textDirection: TextDirection.ltr);
 
-  double getBottomTextY(double textHeight) => (mPaddingBottom - textHeight) / 2 + mDrawHeight;
+  double getBottomTextY(double textHeight) =>
+      (mPaddingBottom - textHeight) / 2 + mDrawHeight;
 
-  double getY(double volume) => mDrawHeight - (mDrawHeight) * volume / mMaxVolume;
+  double getY(double volume) =>
+      mDrawHeight - (mDrawHeight) * volume / mMaxVolume;
 
   @override
   bool shouldRepaint(DepthChartPainter oldDelegate) {
@@ -341,6 +347,6 @@ class DepthChartPainter extends CustomPainter {
 //        oldDelegate.mSellData != mSellData ||
 //        oldDelegate.isLongPress != isLongPress ||
 //        oldDelegate.pressOffset != pressOffset;
-  return true;
+    return true;
   }
 }

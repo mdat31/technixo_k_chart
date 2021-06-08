@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 
 import '../entity/macd_entity.dart';
 import '../k_chart_widget.dart' show SecondaryState;
-import 'base_chart_renderer.dart';
+import 'n_base_chart_renderer.dart';
 
-class SecondaryRenderer extends BaseChartRenderer<MACDEntity> {
+class NSecondaryRenderer extends NBaseChartRenderer<MACDEntity> {
   double mMACDWidth = ChartStyle.macdWidth;
   SecondaryState state;
 
-  SecondaryRenderer(Rect mainRect, double maxValue, double minValue,
+  NSecondaryRenderer(Rect mainRect, double maxValue, double minValue,
       double topPadding, this.state, double scaleX)
       : super(
             chartRect: mainRect,

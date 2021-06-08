@@ -1,28 +1,28 @@
 import 'dart:async' show StreamSink;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_k_chart/entity/candle_chart/candle_chart_entity.dart';
+import 'package:flutter_k_chart/entity/candle_chart/info_window.dart';
 
-import '../entity/info_window_entity.dart';
-import '../entity/k_line_entity.dart';
 import '../utils/date_format_util.dart';
-import 'base_chart_painter.dart';
-import 'base_chart_renderer.dart';
-import 'main_renderer.dart';
-import 'secondary_renderer.dart';
-import 'vol_renderer.dart';
+import 'n_base_chart_painter.dart';
+import 'n_base_chart_renderer.dart';
+import 'n_main_renderer.dart';
+import 'n_secondary_renderer.dart';
+import 'n_vol_renderer.dart';
 
-class ChartPainter extends BaseChartPainter {
-  static get maxScrollX => BaseChartPainter.maxScrollX;
-  late BaseChartRenderer mMainRenderer;
-  BaseChartRenderer? mVolRenderer, mSecondaryRenderer;
-  StreamSink<InfoWindowEntity?>? sink;
+class NChartPainter extends NBaseChartPainter {
+  static get maxScrollX => NBaseChartPainter.maxScrollX;
+  late NBaseChartRenderer mMainRenderer;
+  NBaseChartRenderer? mVolRenderer, mSecondaryRenderer;
+  StreamSink<InfoWindow?>? sink;
   AnimationController? controller;
   double opacity;
   List<Color>? bgColor;
   List<int> maDayList;
 
-  ChartPainter({
-    required List<KLineEntity>? datas,
+  NChartPainter({
+    required List<CandleChartEntity>? datas,
     required scaleX,
     required scrollX,
     required isLongPass,
@@ -50,7 +50,7 @@ class ChartPainter extends BaseChartPainter {
 
   @override
   void initChartRenderer() {
-    mMainRenderer = MainRenderer(
+    mMainRenderer = NMainRenderer(
       mMainRect,
       mMainMaxValue,
       mMainMinValue,
@@ -61,11 +61,11 @@ class ChartPainter extends BaseChartPainter {
       maDayList,
     );
     if (mVolRect != null) {
-      mVolRenderer ??= VolRenderer(mVolRect!, mVolMaxValue, mVolMinValue,
+      mVolRenderer ??= NVolRenderer(mVolRect!, mVolMaxValue, mVolMinValue,
           ChartStyle.childPadding, scaleX);
     }
     if (mSecondaryRect != null) {
-      mSecondaryRenderer ??= SecondaryRenderer(
+      mSecondaryRenderer ??= NSecondaryRenderer(
           mSecondaryRect!,
           mSecondaryMaxValue,
           mSecondaryMinValue,
@@ -109,6 +109,7 @@ class ChartPainter extends BaseChartPainter {
         0, size.height - ChartStyle.bottomDateHigh, size.width, size.height);
     canvas.drawRect(
         dateRect, mBgPaint..shader = mBgGradient.createShader(dateRect));
+    debugPrint('### drawBg $dateRect');
   }
 
   @override
@@ -117,6 +118,7 @@ class ChartPainter extends BaseChartPainter {
     mVolRenderer?.drawGrid(canvas, ChartStyle.gridRows, ChartStyle.gridColumns);
     mSecondaryRenderer?.drawGrid(
         canvas, ChartStyle.gridRows, ChartStyle.gridColumns);
+    debugPrint('### drawGrid $mMainRenderer');
   }
 
   @override
@@ -125,9 +127,9 @@ class ChartPainter extends BaseChartPainter {
     canvas.translate(mTranslateX * scaleX, 0.0);
     canvas.scale(scaleX, 1.0);
     for (int i = mStartIndex; datas != null && i <= mStopIndex; i++) {
-      KLineEntity? curPoint = datas?[i];
+      CandleChartEntity? curPoint = datas?[i];
       if (curPoint == null) continue;
-      KLineEntity lastPoint = i == 0 ? curPoint : datas![i - 1];
+      CandleChartEntity lastPoint = i == 0 ? curPoint : datas![i - 1];
       double curX = getX(i);
       double lastX = i == 0 ? curX : getX(i - 1);
 
@@ -139,6 +141,7 @@ class ChartPainter extends BaseChartPainter {
 
     if (isLongPress == true) drawCrossLine(canvas, size);
     canvas.restore();
+    debugPrint('### drawChart ${mMainRenderer.chartRect}');
   }
 
   @override
@@ -147,6 +150,7 @@ class ChartPainter extends BaseChartPainter {
     mMainRenderer.drawRightText(canvas, textStyle, ChartStyle.gridRows);
     mVolRenderer?.drawRightText(canvas, textStyle, ChartStyle.gridRows);
     mSecondaryRenderer?.drawRightText(canvas, textStyle, ChartStyle.gridRows);
+    // debugPrint('### drawRightText $mMainRenderer');
   }
 
   @override
@@ -160,7 +164,7 @@ class ChartPainter extends BaseChartPainter {
       if (translateX >= startX && translateX <= stopX) {
         int index = indexOfTranslateX(translateX);
         if (datas?[index] == null) continue;
-        TextPainter tp = getTextPainter(getDate(datas![index].id!),
+        TextPainter tp = getTextPainter(getDate(datas![index].openTime),
             color: ChartColors.xAxisTextColor);
         y = size.height -
             (ChartStyle.bottomDateHigh - tp.height) / 2 -
@@ -168,6 +172,7 @@ class ChartPainter extends BaseChartPainter {
         tp.paint(canvas, Offset(columnSpace * i - tp.width / 2, y));
       }
     }
+    // debugPrint('### drawDate $mMainRenderer');
   }
 
   Paint selectPointPaint = Paint()
@@ -183,7 +188,7 @@ class ChartPainter extends BaseChartPainter {
   @override
   void drawCrossLineText(Canvas canvas, Size size) {
     var index = calculateSelectedX(selectX);
-    KLineEntity point = getItem(index)!;
+    CandleChartEntity point = getItem(index)!;
 
     TextPainter tp = getTextPainter(format(point.close), color: Colors.white);
     double textHeight = tp.height;
@@ -224,7 +229,7 @@ class ChartPainter extends BaseChartPainter {
     }
 
     TextPainter dateTp =
-        getTextPainter(getDate(point.id!), color: Colors.white);
+        getTextPainter(getDate(point.openTime), color: Colors.white);
     textWidth = dateTp.width;
     r = textHeight / 2;
     x = translateXtoX(getX(index));
@@ -247,11 +252,12 @@ class ChartPainter extends BaseChartPainter {
 
     dateTp.paint(canvas, Offset(x - textWidth / 2, y));
     //长按显示这条数据详情
-    sink?.add(InfoWindowEntity(point, isLeft));
+    sink?.add(InfoWindow(point, isLeft));
+    // debugPrint('### drawCrossLineText $sink');
   }
 
   @override
-  void drawText(Canvas canvas, KLineEntity? data, double x) {
+  void drawText(Canvas canvas, CandleChartEntity? data, double x) {
     //长按显示按中的数据
     if (isLongPress) {
       var index = calculateSelectedX(selectX);
@@ -261,6 +267,7 @@ class ChartPainter extends BaseChartPainter {
     mMainRenderer.drawText(canvas, data, x);
     mVolRenderer?.drawText(canvas, data, x);
     mSecondaryRenderer?.drawText(canvas, data, x);
+    // debugPrint('### drawText $data');
   }
 
   @override
@@ -291,12 +298,13 @@ class ChartPainter extends BaseChartPainter {
           color: ChartColors.maxMinTextColor);
       tp.paint(canvas, Offset(x - tp.width, y - tp.height / 2));
     }
+    // debugPrint('### drawMaxAndMin $x');
   }
 
   ///画交叉线
   void drawCrossLine(Canvas canvas, Size size) {
     var index = calculateSelectedX(selectX);
-    KLineEntity? point = getItem(index);
+    CandleChartEntity? point = getItem(index);
     Paint paintY = Paint()
       ..color = Colors.white12
       ..strokeWidth = ChartStyle.vCrossWidth
@@ -318,6 +326,7 @@ class ChartPainter extends BaseChartPainter {
     canvas.drawOval(
         Rect.fromCenter(center: Offset(x, y), height: 2.0 * scaleX, width: 2.0),
         paintX);
+    // debugPrint('### drawCrossLine $y');
   }
 
   final Paint realTimePaint = Paint()
@@ -329,7 +338,7 @@ class ChartPainter extends BaseChartPainter {
   @override
   void drawRealTimePrice(Canvas canvas, Size size) {
     if (mMarginRight == 0 || datas?.isEmpty == true) return;
-    KLineEntity point = datas!.last;
+    CandleChartEntity point = datas!.last;
     TextPainter tp = getTextPainter(format(point.close),
         color: ChartColors.rightRealTimeTextColor);
     double y = getMainY(point.close);
@@ -424,25 +433,29 @@ class ChartPainter extends BaseChartPainter {
             ..color = ChartColors.realTimeTextColor
             ..shader = null);
     }
+    // debugPrint('### drawRealTimePrice $y');
   }
 
   TextPainter getTextPainter(text, {color = Colors.white}) {
     TextSpan span = TextSpan(text: "$text", style: getTextStyle(color));
     TextPainter tp = TextPainter(text: span, textDirection: TextDirection.ltr);
     tp.layout();
+    // debugPrint('### getTextPainter $tp');
     return tp;
   }
 
   String getDate(int date) =>
-      dateFormat(DateTime.fromMillisecondsSinceEpoch(date * 1000), mFormats);
+      dateFormat(DateTime.fromMillisecondsSinceEpoch(date), mFormats);
 
   double getMainY(double y) => mMainRenderer.getY(y);
 
   startAnimation() {
+    debugPrint('### startAnimation');
     if (controller?.isAnimating != true) controller?.repeat(reverse: true);
   }
 
   stopAnimation() {
+    debugPrint('### stopAnimation');
     if (controller?.isAnimating == true) controller?.stop();
   }
 }

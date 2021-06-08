@@ -1,11 +1,11 @@
 import 'dart:math';
 
-import '../entity/k_line_entity.dart';
+import 'package:flutter_k_chart/entity/candle_chart/candle_chart_entity.dart';
 
-class DataUtil {
+class DataUtilBinance {
   static const int n = 20, k = 2;
 
-  static calculate(List<KLineEntity>? dataList, List<int> maDayList) {
+  static calculate(List<CandleChartEntity>? dataList, List<int> maDayList) {
     if (dataList == null) return;
     _calcMA(dataList, maDayList);
     _calcBOLL(dataList, n, k);
@@ -17,12 +17,12 @@ class DataUtil {
     _calcCCI(dataList);
   }
 
-  static _calcMA(List<KLineEntity> dataList, List<int> maDayList) {
+  static _calcMA(List<CandleChartEntity> dataList, List<int> maDayList) {
     List<double> ma = List<double>.filled(maDayList.length, 0);
 
     if (dataList.isNotEmpty) {
       for (int i = 0; i < dataList.length; i++) {
-        KLineEntity entity = dataList[i];
+        CandleChartEntity entity = dataList[i];
         final close = entity.close;
         entity.maValueList = List<double>.filled(maDayList.length, 0);
 
@@ -41,10 +41,10 @@ class DataUtil {
     }
   }
 
-  static void _calcBOLL(List<KLineEntity> dataList, int n, int k) {
+  static void _calcBOLL(List<CandleChartEntity> dataList, int n, int k) {
     _calcBOLLMA(n, dataList);
     for (int i = 0; i < dataList.length; i++) {
-      KLineEntity entity = dataList[i];
+      CandleChartEntity entity = dataList[i];
       if (i >= n) {
         double md = 0;
         for (int j = i - n + 1; j <= i; j++) {
@@ -62,10 +62,10 @@ class DataUtil {
     }
   }
 
-  static void _calcBOLLMA(int day, List<KLineEntity> dataList) {
+  static void _calcBOLLMA(int day, List<CandleChartEntity> dataList) {
     double ma = 0;
     for (int i = 0; i < dataList.length; i++) {
-      KLineEntity entity = dataList[i];
+      CandleChartEntity entity = dataList[i];
       ma += entity.close;
       if (i == day - 1) {
         entity.BOLLMA = ma / day;
@@ -78,7 +78,8 @@ class DataUtil {
     }
   }
 
-  static void _calcMACD(List<KLineEntity> dataList, [bool isLast = false]) {
+  static void _calcMACD(List<CandleChartEntity> dataList,
+      [bool isLast = false]) {
     double ema12 = 0;
     double ema26 = 0;
     double dif = 0;
@@ -97,7 +98,7 @@ class DataUtil {
     }
 
     for (; i < dataList.length; i++) {
-      KLineEntity entity = dataList[i];
+      CandleChartEntity entity = dataList[i];
       final close = entity.close;
       if (i == 0) {
         ema12 = close;
@@ -122,7 +123,8 @@ class DataUtil {
     }
   }
 
-  static void _calcVolumeMA(List<KLineEntity> dataList, [bool isLast = false]) {
+  static void _calcVolumeMA(List<CandleChartEntity> dataList,
+      [bool isLast = false]) {
     double volumeMa5 = 0;
     double volumeMa10 = 0;
 
@@ -135,7 +137,7 @@ class DataUtil {
     }
 
     for (; i < dataList.length; i++) {
-      KLineEntity entry = dataList[i];
+      CandleChartEntity entry = dataList[i];
 
       volumeMa5 += entry.vol;
       volumeMa10 += entry.vol;
@@ -160,7 +162,8 @@ class DataUtil {
     }
   }
 
-  static void _calcRSI(List<KLineEntity> dataList, [bool isLast = false]) {
+  static void _calcRSI(List<CandleChartEntity> dataList,
+      [bool isLast = false]) {
     double rsi;
     double rsiABSEma = 0;
     double rsiMaxEma = 0;
@@ -175,7 +178,7 @@ class DataUtil {
     }
 
     for (; i < dataList.length; i++) {
-      KLineEntity entity = dataList[i];
+      CandleChartEntity entity = dataList[i];
       final double close = entity.close;
       if (i == 0) {
         rsi = 0;
@@ -197,7 +200,8 @@ class DataUtil {
     }
   }
 
-  static void _calcKDJ(List<KLineEntity> dataList, [bool isLast = false]) {
+  static void _calcKDJ(List<CandleChartEntity> dataList,
+      [bool isLast = false]) {
     double k = 0;
     double d = 0;
 
@@ -210,7 +214,7 @@ class DataUtil {
     }
 
     for (; i < dataList.length; i++) {
-      KLineEntity entity = dataList[i];
+      CandleChartEntity entity = dataList[i];
       final double close = entity.close;
       int startIndex = i - 13;
       if (startIndex < 0) {
@@ -250,13 +254,13 @@ class DataUtil {
   }
 
   //WR(N) = 100 * [ HIGH(N)-C ] / [ HIGH(N)-LOW(N) ]
-  static void _calcWR(List<KLineEntity> dataList, [bool isLast = false]) {
+  static void _calcWR(List<CandleChartEntity> dataList, [bool isLast = false]) {
     int i = 0;
     if (isLast && dataList.length > 1) {
       i = dataList.length - 1;
     }
     for (; i < dataList.length; i++) {
-      KLineEntity entity = dataList[i];
+      CandleChartEntity entity = dataList[i];
       int startIndex = i - 14;
       if (startIndex < 0) {
         startIndex = 0;
@@ -279,7 +283,7 @@ class DataUtil {
     }
   }
 
-  static void _calcCCI(List<KLineEntity> dataList) {
+  static void _calcCCI(List<CandleChartEntity> dataList) {
     final size = dataList.length;
     final count = 14;
     for (int i = 0; i < size; i++) {
@@ -308,8 +312,8 @@ class DataUtil {
   }
 
   //增量更新时计算最后一个数据
-  static addLastData(
-      List<KLineEntity>? dataList, KLineEntity? data, List<int> maDayList) {
+  static addLastData(List<CandleChartEntity>? dataList, CandleChartEntity? data,
+      List<int> maDayList) {
     if (dataList == null || data == null) return;
     dataList.add(data);
     _calcMA(dataList, maDayList);
@@ -323,7 +327,8 @@ class DataUtil {
   }
 
   //更新最后一条数据
-  static updateLastData(List<KLineEntity>? dataList, List<int> maDayList) {
+  static updateLastData(
+      List<CandleChartEntity>? dataList, List<int> maDayList) {
     if (dataList == null) return;
     _calcMA(dataList, maDayList);
     _calcBOLL(dataList, n, k);

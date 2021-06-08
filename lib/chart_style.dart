@@ -5,7 +5,10 @@ class ChartColors {
   static const Color bgColor = Color(0xff0D141E);
   static const Color kLineColor = Color(0xff4C86CD);
   static const Color gridColor = Color(0xff4c5c74);
-  static const List<Color> kLineShadowColor = [Color(0x554C86CD), Color(0x00000000)]; //k线阴影渐变
+  static const List<Color> kLineShadowColor = [
+    Color(0x554C86CD),
+    Color(0x00000000)
+  ]; //k线阴影渐变
   static const Color ma5Color = Color(0xffC9B885);
   static const Color ma10Color = Color(0xff6CB0A6);
   static const Color ma30Color = Color(0xff9979C6);

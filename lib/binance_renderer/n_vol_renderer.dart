@@ -5,11 +5,12 @@ import 'package:flutter/material.dart';
 import '../entity/volume_entity.dart';
 import '../renderer/base_chart_renderer.dart';
 import '../utils/number_util.dart';
+import 'n_base_chart_renderer.dart';
 
-class VolRenderer extends BaseChartRenderer<VolumeEntity> {
+class NVolRenderer extends NBaseChartRenderer<VolumeEntity> {
   double mVolWidth = ChartStyle.volWidth;
 
-  VolRenderer(Rect mainRect, double maxValue, double minValue,
+  NVolRenderer(Rect mainRect, double maxValue, double minValue,
       double topPadding, double scaleX)
       : super(
             chartRect: mainRect,

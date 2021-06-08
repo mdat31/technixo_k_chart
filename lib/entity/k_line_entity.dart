@@ -30,9 +30,4 @@ class KLineEntity extends KEntity {
       _$KLineEntityFromJson(json);
 
   Map<String, dynamic> toJson() => _$KLineEntityToJson(this);
-
-  @override
-  String toString() {
-    return 'MarketModel{open: $open, high: $high, low: $low, close: $close, vol: $vol, id: $id}';
-  }
 }

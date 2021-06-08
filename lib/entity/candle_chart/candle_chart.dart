@@ -1,10 +1,10 @@
-import 'package:flutter/foundation.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:json_annotation/json_annotation.dart';
-
-part 'candle_chart.freezed.dart';
-
-part 'candle_chart.g.dart';
+import 'package:flutter_k_chart/entity/candle_entity.dart';
+import 'package:flutter_k_chart/entity/cci_entity.dart';
+import 'package:flutter_k_chart/entity/kdj_entity.dart';
+import 'package:flutter_k_chart/entity/macd_entity.dart';
+import 'package:flutter_k_chart/entity/rsi_entity.dart';
+import 'package:flutter_k_chart/entity/rw_entity.dart';
+import 'package:flutter_k_chart/entity/volume_entity.dart';
 
 /// [
 ///   [
@@ -22,61 +22,12 @@ part 'candle_chart.g.dart';
 ///     "17928899.62484339" // Ignore.
 ///   ]
 /// ]
-@freezed
-class CandleChart with _$CandleChart {
-  factory CandleChart({
-    /// Open time
-    required int openTime,
-
-    /// Open Price
-    required String openPrice,
-
-    /// Highest price
-    required String highPrice,
-
-    /// Lowest Price
-    required String lowPrice,
-
-    /// Close Price
-    required String closePrice,
-
-    /// Volume trade
-    required String volume,
-
-    /// close Time
-    required int closeTime,
-
-    /// quote Volume
-    required String quoteVolume,
-
-    /// number of trade
-    required int numberOfTrades,
-
-    /// takerBuyBaseVolume
-    required String takerBuyBaseVolume,
-
-    /// takerBuyQuoteVolume
-    required String takerBuyQuoteVolume,
-
-    /// ignore
-    required String ignore,
-  }) = _CandleChart;
-
-  factory CandleChart.fromJson(Map<String, dynamic> json) =>
-      _$CandleChartFromJson(json);
-
-  factory CandleChart.fromApi(List<dynamic> api) => CandleChart(
-        openTime: api[0] as int,
-        openPrice: api[1] as String,
-        highPrice: api[2] as String,
-        lowPrice: api[3] as String,
-        closePrice: api[4] as String,
-        volume: api[5] as String,
-        closeTime: api[6] as int,
-        quoteVolume: api[7] as String,
-        numberOfTrades: api[8] as int,
-        takerBuyBaseVolume: api[9] as String,
-        takerBuyQuoteVolume: api[10] as String,
-        ignore: api[11] as String,
-      );
-}
+class CandleChart
+    with
+        CandleEntity,
+        VolumeEntity,
+        KDJEntity,
+        RSIEntity,
+        WREntity,
+        MACDEntity,
+        CCIEntity {}
