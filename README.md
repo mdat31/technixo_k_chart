@@ -1,4 +1,4 @@
-# flutter_k_chart
+# technixo_k_chart
 
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](/LICENSE)
 
