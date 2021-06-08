@@ -15,6 +15,7 @@ class DataUtil {
     _calcMACD(dataList);
     _calcRSI(dataList);
     _calcWR(dataList);
+    _calcCCI(dataList);
   }
 
   static _calcMA(List<KLineEntity> dataList, {bool isLast = false}) {
