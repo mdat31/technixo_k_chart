@@ -1,8 +1,8 @@
-name: flutter_k_chart
-description: flutter_k_chart, Writted with pure dart, supported both iOS and Android.
-version: 0.1.5
+name: technixo_k_chart
+description: technixo_k_chart, Writted with pure dart, supported both iOS and Android.
+version: 0.0.1
 #author: gwh <415593725@qq.com>
-homepage: https://github.com/gwhcn/flutter_k_chart
+homepage: https://github.com/mdat31/technixo_k_chart.git
 
 environment:
   sdk: ">=2.12.0 <3.0.0"

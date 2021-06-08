@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart' show Color;
 
 class ChartColors {
+  ChartColors._();
+
   //背景颜色
   static const Color bgColor = Color(0xff0D141E);
   static const Color kLineColor = Color(0xff4C86CD);
   static const Color gridColor = Color(0xff4c5c74);
-  static const List<Color> kLineShadowColor = [
-    Color(0x554C86CD),
-    Color(0x00000000)
-  ]; //k线阴影渐变
+  static const List<Color> kLineShadowColor = [Color(0x554C86CD), Color(0x00000000)]; //k线阴影渐变
   static const Color ma5Color = Color(0xffC9B885);
   static const Color ma10Color = Color(0xff6CB0A6);
   static const Color ma30Color = Color(0xff9979C6);
@@ -53,21 +52,7 @@ class ChartColors {
   static const Color simpleLineUpColor = Color(0xff6CB0A6);
   static const Color simpleLineDnColor = Color(0xffC15466);
 
-  static Color getMAColor(int index) {
-    Color maColor = ma5Color;
-    switch (index % 3) {
-      case 0:
-        maColor = ma5Color;
-        break;
-      case 1:
-        maColor = ma10Color;
-        break;
-      case 2:
-        maColor = ma30Color;
-        break;
-    }
-    return maColor;
-  }
+
 }
 
 class ChartStyle {
@@ -95,11 +80,9 @@ class ChartStyle {
   static const double hCrossWidth = 0.5;
 
   //网格
-  static const int gridRows = 5, gridColumns = 5;
+  static const int gridRows = 3, gridColumns = 4;
 
-  static const double topPadding = 30.0,
-      bottomDateHigh = 20.0,
-      childPadding = 25.0;
+  static const double topPadding = 30.0, bottomDateHigh = 20.0, childPadding = 25.0;
 
   static const double defaultTextSize = 10.0;
 }

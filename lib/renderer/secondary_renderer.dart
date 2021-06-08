@@ -1,9 +1,9 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-
 import '../entity/macd_entity.dart';
 import '../k_chart_widget.dart' show SecondaryState;
+
 import 'base_chart_renderer.dart';
 
 class SecondaryRenderer extends BaseChartRenderer<MACDEntity> {
@@ -76,7 +76,7 @@ class SecondaryRenderer extends BaseChartRenderer<MACDEntity> {
 
   @override
   void drawText(Canvas canvas, MACDEntity data, double x) {
-    List<TextSpan>? children;
+    List<TextSpan> children;
     switch (state) {
       case SecondaryState.MACD:
         children = [
@@ -131,11 +131,11 @@ class SecondaryRenderer extends BaseChartRenderer<MACDEntity> {
         ];
         break;
       default:
+        children = <TextSpan>[];
         break;
     }
     TextPainter tp = TextPainter(
-        text: TextSpan(children: children ?? []),
-        textDirection: TextDirection.ltr);
+        text: TextSpan(children: children), textDirection: TextDirection.ltr);
     tp.layout();
     tp.paint(canvas, Offset(x, chartRect.top - topPadding));
   }

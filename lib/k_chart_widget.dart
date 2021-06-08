@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
 import 'package:flutter_k_chart/generated/l10n.dart';
-
 import 'chart_style.dart';
 import 'entity/info_window_entity.dart';
 import 'entity/k_line_entity.dart';
@@ -12,56 +11,22 @@ import 'utils/date_format_util.dart' hide S;
 import 'utils/number_util.dart';
 
 enum MainState { MA, BOLL, NONE }
-enum SecondaryState { MACD, KDJ, RSI, WR, CCI, NONE }
-
-class TimeFormat {
-  static const List<String> YEAR_MONTH_DAY = [yyyy, '-', mm, '-', dd];
-  static const List<String> YEAR_MONTH_DAY_WITH_HOUR = [
-    yyyy,
-    '-',
-    mm,
-    '-',
-    dd,
-    ' ',
-    HH,
-    ':',
-    nn
-  ];
-}
+enum VolState { VOL, NONE }
+enum SecondaryState { MACD, KDJ, RSI, WR, NONE }
 
 class KChartWidget extends StatefulWidget {
-  final List<KLineEntity>? datas;
+  final List<KLineEntity> datas;
   final MainState mainState;
-  final bool volHidden;
+  final VolState volState;
   final SecondaryState secondaryState;
   final bool isLine;
-  final Function()? onSecondaryTap;
-  final List<String> timeFormat;
-
-  //当屏幕滚动到尽头会调用，真为拉到屏幕右侧尽头，假为拉到屏幕左侧尽头
-  final Function(bool)? onLoadMore;
-  final List<Color>? bgColor;
-  final List<int> maDayList;
-  final int flingTime;
-  final double flingRatio;
-  final Curve flingCurve;
-  final Function(bool)? isOnDrag;
 
   KChartWidget(
     this.datas, {
-    this.volHidden = false,
     this.mainState = MainState.MA,
+    this.volState = VolState.VOL,
     this.secondaryState = SecondaryState.MACD,
     this.isLine = false,
-    this.bgColor,
-    this.timeFormat = TimeFormat.YEAR_MONTH_DAY,
-    this.maDayList = const [5, 10, 20],
-    this.flingTime = 600,
-    this.flingRatio = 0.5,
-    this.flingCurve = Curves.decelerate,
-    this.isOnDrag,
-    this.onLoadMore,
-    this.onSecondaryTap,
     int fractionDigits = 2,
   }) {
     NumberUtil.fractionDigits = fractionDigits;
@@ -76,7 +41,7 @@ class _KChartWidgetState extends State<KChartWidget>
   late AnimationController _controller;
   late Animation<double> _animation;
   double mScaleX = 1.0, mScrollX = 0.0, mSelectX = 0.0;
-  StreamController<InfoWindowEntity?>? mInfoWindowStream;
+  late StreamController<InfoWindowEntity?> mInfoWindowStream;
   double mWidth = 0;
   late AnimationController _scrollXController;
 
@@ -90,10 +55,10 @@ class _KChartWidgetState extends State<KChartWidget>
   @override
   void initState() {
     super.initState();
-    mInfoWindowStream = StreamController<InfoWindowEntity?>();
+    mInfoWindowStream = StreamController();
     _controller = AnimationController(
         duration: const Duration(milliseconds: 850), vsync: this);
-    _animation = Tween(begin: 0.9, end: 0.1).animate(_controller.view)
+    _animation = Tween(begin: 0.9, end: 0.1).animate(_controller)
       ..addListener(() => setState(() {}));
     _scrollXController = AnimationController(
         vsync: this,
@@ -139,7 +104,7 @@ class _KChartWidgetState extends State<KChartWidget>
 
   @override
   void dispose() {
-    mInfoWindowStream?.close();
+    mInfoWindowStream.close();
     _controller.dispose();
     _scrollXController.dispose();
     super.dispose();
@@ -147,7 +112,7 @@ class _KChartWidgetState extends State<KChartWidget>
 
   @override
   Widget build(BuildContext context) {
-    if (widget.datas == null || widget.datas!.isEmpty) {
+    if (widget.datas.isEmpty) {
       mScrollX = mSelectX = 0.0;
       mScaleX = 1.0;
     }
@@ -157,7 +122,7 @@ class _KChartWidgetState extends State<KChartWidget>
         isDrag = true;
       },
       onHorizontalDragUpdate: (details) {
-        if (isScale || isLongPress) return;
+        if (isScale || isLongPress || details.primaryDelta == null) return;
         mScrollX = (details.primaryDelta! / mScaleX + mScrollX)
             .clamp(0.0, ChartPainter.maxScrollX)
             .toDouble();
@@ -173,7 +138,7 @@ class _KChartWidgetState extends State<KChartWidget>
               WidgetsBinding
                   .instance!.window.devicePixelRatio, // logical pixels
         );
-
+        if (details.primaryVelocity == null) return;
         ClampingScrollSimulation simulation = ClampingScrollSimulation(
           position: mScrollX,
           velocity: details.primaryVelocity!,
@@ -209,29 +174,26 @@ class _KChartWidgetState extends State<KChartWidget>
       },
       onLongPressEnd: (details) {
         isLongPress = false;
-        mInfoWindowStream?.sink.add(null);
+        mInfoWindowStream.add(null);
         notifyChanged();
       },
       child: Stack(
         children: <Widget>[
           CustomPaint(
-            size: Size(double.infinity, double.infinity),
+            size: const Size(double.infinity, double.infinity),
             painter: ChartPainter(
-              datas: widget.datas,
-              scaleX: mScaleX,
-              scrollX: mScrollX,
-              selectX: mSelectX,
-              isLongPass: isLongPress,
-              mainState: widget.mainState,
-              volHidden: widget.volHidden,
-              secondaryState: widget.secondaryState,
-              isLine: widget.isLine,
-              sink: mInfoWindowStream?.sink,
-              opacity: _animation.value,
-              controller: _controller,
-              bgColor: widget.bgColor,
-              maDayList: widget.maDayList,
-            ),
+                datas: widget.datas,
+                scaleX: mScaleX,
+                scrollX: mScrollX,
+                selectX: mSelectX,
+                isLongPass: isLongPress,
+                mainState: widget.mainState,
+                volState: widget.volState,
+                secondaryState: widget.secondaryState,
+                isLine: widget.isLine,
+                sink: mInfoWindowStream.sink,
+                opacity: _animation.value,
+                controller: _controller),
           ),
           _buildInfoDialog()
         ],
@@ -263,12 +225,12 @@ class _KChartWidgetState extends State<KChartWidget>
 
   Widget _buildInfoDialog() {
     return StreamBuilder<InfoWindowEntity?>(
-        stream: mInfoWindowStream?.stream,
+        stream: mInfoWindowStream.stream,
         builder: (context, snapshot) {
           if (!isLongPress ||
               widget.isLine == true ||
               !snapshot.hasData ||
-              snapshot.data?.kLineEntity == null) return Container();
+              snapshot.data?.kLineEntity == null) return const SizedBox();
           KLineEntity entity = snapshot.data!.kLineEntity;
           double upDown = entity.close - entity.open;
           double upDownPercent = upDown / entity.open * 100;
@@ -286,8 +248,8 @@ class _KChartWidgetState extends State<KChartWidget>
             alignment:
                 snapshot.data!.isLeft ? Alignment.topLeft : Alignment.topRight,
             child: Container(
-              margin: EdgeInsets.only(left: 10, right: 10, top: 25),
-              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 7),
+              margin: const EdgeInsets.only(left: 10, right: 10, top: 25),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 7),
               decoration: BoxDecoration(
                   color: ChartColors.markerBgColor,
                   border: Border.all(
@@ -311,7 +273,7 @@ class _KChartWidgetState extends State<KChartWidget>
     else
       color = Colors.white;
     return Container(
-      constraints: BoxConstraints(
+      constraints: const BoxConstraints(
           minWidth: 95, maxWidth: 110, maxHeight: 14.0, minHeight: 14.0),
       child: Row(
         mainAxisSize: MainAxisSize.min,

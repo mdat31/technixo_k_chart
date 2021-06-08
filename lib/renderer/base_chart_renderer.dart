@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_k_chart/chart_style.dart';
 import 'package:flutter_k_chart/utils/number_util.dart';
-
 export '../chart_style.dart';
 
 abstract class BaseChartRenderer<T> {
@@ -20,13 +19,12 @@ abstract class BaseChartRenderer<T> {
     ..strokeWidth = 0.5
     ..color = ChartColors.gridColor;
 
-  BaseChartRenderer({
-    required this.chartRect,
-    required this.maxValue,
-    required this.minValue,
-    required this.topPadding,
-    required this.scaleX,
-  }) {
+  BaseChartRenderer(
+      {required this.chartRect,
+      required this.maxValue,
+      required this.minValue,
+      required this.topPadding,
+      required this.scaleX}) {
     if (maxValue == minValue) {
       maxValue += 0.5;
       minValue -= 0.5;
@@ -49,11 +47,8 @@ abstract class BaseChartRenderer<T> {
   void drawChart(T lastPoint, T curPoint, double lastX, double curX, Size size,
       Canvas canvas);
 
-  void drawLine(double? lastPrice, double? curPrice, Canvas canvas,
-      double lastX, double curX, Color color) {
-    if (lastPrice == null || curPrice == null) {
-      return;
-    }
+  void drawLine(double lastPrice, double curPrice, Canvas canvas, double lastX,
+      double curX, Color color) {
     double lastY = getY(lastPrice);
     double curY = getY(curPrice);
     canvas.drawLine(
