@@ -4,7 +4,7 @@ import '../entity/k_line_entity.dart';
 
 class DataUtil {
   static calculate(List<KLineEntity> dataList,
-      {List<int> maDayList = const [5, 10, 20], int n = 20, k = 2}) {
+      {required List<int> maDayList, int n = 20, k = 2}) {
     _calcMA(dataList, maDayList: maDayList);
     _calcBOLL(dataList, n, k);
     _calcVolumeMA(dataList);
@@ -265,7 +265,7 @@ class DataUtil {
 
   //增量更新时计算最后一个数据
   static addLastData(List<KLineEntity> dataList, KLineEntity data,
-      {List<int> maDayList = const [5, 10, 20]}) {
+      {required List<int> maDayList}) {
     dataList.add(data);
     _calcMA(dataList, isLast: true, maDayList: maDayList);
     _calcBOLL(dataList, 20, 2, true);
@@ -274,11 +274,12 @@ class DataUtil {
     _calcMACD(dataList, true);
     _calcRSI(dataList, true);
     _calcWR(dataList, true);
+    _calcCCI(dataList);
   }
 
   //更新最后一条数据
   static updateLastData(List<KLineEntity> dataList,
-      {List<int> maDayList = const [5, 10, 20]}) {
+      {required List<int> maDayList}) {
     _calcMA(dataList, isLast: true, maDayList: maDayList);
     _calcBOLL(dataList, 20, 2, true);
     _calcVolumeMA(dataList, true);
@@ -286,5 +287,6 @@ class DataUtil {
     _calcMACD(dataList, true);
     _calcRSI(dataList, true);
     _calcWR(dataList, true);
+    _calcCCI(dataList);
   }
 }

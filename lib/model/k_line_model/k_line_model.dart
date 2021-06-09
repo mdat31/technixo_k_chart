@@ -22,12 +22,9 @@
 ///        "B": "123456"   // Ignore
 ///   }
 /// }
-import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:json_annotation/json_annotation.dart';
 
 part 'k_line_model.freezed.dart';
-
 part 'k_line_model.g.dart';
 
 @freezed

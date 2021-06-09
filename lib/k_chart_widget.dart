@@ -29,7 +29,7 @@ class KChartWidget extends StatefulWidget {
     this.volHidden = false,
     this.secondaryState = SecondaryState.MACD,
     this.isLine = false,
-    this.maDayList = const [5, 10, 20],
+    required this.maDayList,
     this.bgColor,
     int fractionDigits = 2,
   }) {
@@ -300,7 +300,7 @@ class _KChartWidgetState extends State<KChartWidget>
   }
 
   String getDate(int date) {
-    return dateFormat(DateTime.fromMillisecondsSinceEpoch(date * 1000),
+    return dateFormat(DateTime.fromMillisecondsSinceEpoch(date),
         [yy, '-', mm, '-', dd, ' ', HH, ':', nn]);
   }
 }

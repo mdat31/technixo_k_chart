@@ -350,7 +350,7 @@ class __$KLineModelCopyWithImpl<$Res> extends _$KLineModelCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_KLineModel with DiagnosticableTreeMixin implements _KLineModel {
+class _$_KLineModel implements _KLineModel {
   _$_KLineModel(
       {required this.t,
       required this.T,
@@ -409,32 +409,8 @@ class _$_KLineModel with DiagnosticableTreeMixin implements _KLineModel {
   final String B;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'KLineModel(t: $t, T: $T, s: $s, i: $i, f: $f, L: $L, o: $o, c: $c, h: $h, l: $l, v: $v, n: $n, x: $x, q: $q, V: $V, Q: $Q, B: $B)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'KLineModel'))
-      ..add(DiagnosticsProperty('t', t))
-      ..add(DiagnosticsProperty('T', T))
-      ..add(DiagnosticsProperty('s', s))
-      ..add(DiagnosticsProperty('i', i))
-      ..add(DiagnosticsProperty('f', f))
-      ..add(DiagnosticsProperty('L', L))
-      ..add(DiagnosticsProperty('o', o))
-      ..add(DiagnosticsProperty('c', c))
-      ..add(DiagnosticsProperty('h', h))
-      ..add(DiagnosticsProperty('l', l))
-      ..add(DiagnosticsProperty('v', v))
-      ..add(DiagnosticsProperty('n', n))
-      ..add(DiagnosticsProperty('x', x))
-      ..add(DiagnosticsProperty('q', q))
-      ..add(DiagnosticsProperty('V', V))
-      ..add(DiagnosticsProperty('Q', Q))
-      ..add(DiagnosticsProperty('B', B));
   }
 
   @override

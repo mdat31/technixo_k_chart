@@ -1,3 +1,5 @@
+import 'package:technixo_k_chart/model/k_line_model/k_line_model.dart';
+
 import '../entity/k_entity.dart';
 
 class KLineEntity extends KEntity {
@@ -14,7 +16,7 @@ class KLineEntity extends KEntity {
   double? takerBuyQuoteVolume;
   double? ignore;
 
-  KLineEntity.fromJson(Map<String, dynamic> json) {
+  KLineEntity.fromHuobi(Map<String, dynamic> json) {
     open = (json['open'] as num).toDouble();
     high = (json['high'] as num).toDouble();
     low = (json['low'] as num).toDouble();
@@ -22,22 +24,37 @@ class KLineEntity extends KEntity {
     vol = (json['vol'] as num).toDouble();
     amount = (json['amount'] as num?)?.toDouble();
     count = json['count'] as int?;
-    id = json['id'] as int?;
+    id = (json['id'] as int? ?? 0) * 1000;
   }
 
-  KLineEntity.fromApi(List api) {
-    id = (api[0] as int) ~/ 1000;
-    open = double.parse(api[1]);
-    high = double.parse(api[2]);
-    low = double.parse(api[3]);
-    close = double.parse(api[4]);
-    vol = double.parse(api[5]);
-    closeTime = api[6] as int;
-    amount = double.parse(api[7]);
-    count = api[8] as int;
-    takerBuyBaseVolume = double.parse(api[9]);
-    takerBuyQuoteVolume = double.parse(api[10]);
-    ignore = double.parse(api[11]);
+  KLineEntity.fromBinance(List<dynamic> data) {
+    id = (data[0] as int);
+    open = double.parse(data[1]);
+    high = double.parse(data[2]);
+    low = double.parse(data[3]);
+    close = double.parse(data[4]);
+    vol = double.parse(data[5]);
+    closeTime = data[6] as int;
+    amount = double.parse(data[7]);
+    count = data[8] as int;
+    takerBuyBaseVolume = double.parse(data[9]);
+    takerBuyQuoteVolume = double.parse(data[10]);
+    ignore = double.parse(data[11]);
+  }
+
+  KLineEntity.fromModel(KLineModel model) {
+    id = model.t;
+    open = double.parse(model.o);
+    high = double.parse(model.h);
+    low = double.parse(model.l);
+    close = double.parse(model.c);
+    vol = double.parse(model.v);
+    closeTime = model.T;
+    amount = double.parse(model.c);
+    count = model.t;
+    takerBuyBaseVolume = double.parse(model.V);
+    takerBuyQuoteVolume = double.parse(model.Q);
+    ignore = double.parse(model.B);
   }
 
   Map<String, dynamic> toJson() {

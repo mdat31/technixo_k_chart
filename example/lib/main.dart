@@ -6,7 +6,9 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:technixo_k_chart/generated/l10n.dart' as k_chart;
 import 'package:technixo_k_chart/k_chart_widget.dart';
+import 'package:technixo_k_chart/model/k_line_model/k_line_model.dart';
 import 'package:technixo_k_chart/technixo_k_chart.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 void main() => runApp(MyApp());
 
@@ -45,6 +47,10 @@ class _MyHomePageState extends State<MyHomePage> {
   bool volHidden = true;
   List<DepthEntity> _bids = [], _asks = [];
   List<int> maDayList = const [10, 100, 1000];
+
+  final channel = WebSocketChannel.connect(
+    Uri.parse('wss://fstream.binance.com/stream?streams=btcusdt@kline_1m'),
+  );
 
   @override
   void initState() {
@@ -91,38 +97,53 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xff17212F),
-      body: ListView(
-        children: <Widget>[
-          Stack(children: <Widget>[
-            Container(
-              height: 450,
-              margin: EdgeInsets.symmetric(horizontal: 10),
-              width: double.infinity,
-              child: KChartWidget(
-                datas,
-                isLine: isLine,
-                mainState: _mainState,
-                secondaryState: _secondaryState,
-                volHidden: volHidden,
-                fractionDigits: 2,
-                maDayList: maDayList,
-              ),
-            ),
-            if (showLoading)
-              Container(
-                  width: double.infinity,
-                  height: 450,
+      body: StreamBuilder<dynamic>(
+          stream: channel.stream,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              final response = json.decode(snapshot.data);
+              final model = KLineModel.fromJson(response['data']['k']);
+              final entity = KLineEntity.fromModel(model);
+              debugPrint('${entity.toJson()}');
+              datas.last = entity;
+              DataUtil.updateLastData(datas, maDayList: maDayList);
+            }
+            return ListView(
+              children: <Widget>[
+                Stack(
                   alignment: Alignment.center,
-                  child: CircularProgressIndicator()),
-          ]),
-          buildButtons(),
-          Container(
-            height: 230,
-            width: double.infinity,
-            child: DepthChart(_bids, _asks),
-          )
-        ],
-      ),
+                  children: <Widget>[
+                    Container(
+                      height: 450,
+                      margin: EdgeInsets.symmetric(horizontal: 10),
+                      width: double.infinity,
+                      child: KChartWidget(
+                        datas,
+                        isLine: isLine,
+                        mainState: _mainState,
+                        secondaryState: _secondaryState,
+                        volHidden: volHidden,
+                        fractionDigits: 2,
+                        maDayList: maDayList,
+                      ),
+                    ),
+                    if (showLoading)
+                      Container(
+                          width: double.infinity,
+                          height: 450,
+                          alignment: Alignment.center,
+                          child: CircularProgressIndicator()),
+                  ],
+                ),
+                // buildButtons(),
+                // Container(
+                //   height: 230,
+                //   width: double.infinity,
+                //   child: DepthChart(_bids, _asks),
+                // ),
+              ],
+            );
+          }),
     );
   }
 
@@ -136,18 +157,18 @@ class _MyHomePageState extends State<MyHomePage> {
           datas.last.close += (Random().nextInt(100) - 50).toDouble();
           datas.last.high = max(datas.last.high, datas.last.close);
           datas.last.low = min(datas.last.low, datas.last.close);
-          DataUtil.updateLastData(datas);
+          DataUtil.updateLastData(datas, maDayList: maDayList);
         }),
         button("addData", onPressed: () {
           //拷贝一个对象，修改数据
-          var kLineEntity = KLineEntity.fromJson(datas.last.toJson());
+          var kLineEntity = KLineEntity.fromHuobi(datas.last.toJson());
           kLineEntity.id = kLineEntity.id! + 60 * 60 * 24;
           kLineEntity.open = kLineEntity.close;
           kLineEntity.close += (Random().nextInt(100) - 50).toDouble();
           datas.last.high = max(datas.last.high, datas.last.close);
           datas.last.low = min(datas.last.low, datas.last.close);
           debugPrint('### ${datas.last.toJson()}');
-          DataUtil.addLastData(datas, kLineEntity);
+          DataUtil.addLastData(datas, kLineEntity, maDayList: maDayList);
         }),
         TextButton(
             onPressed: () {
@@ -174,7 +195,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void getData(String period,
-      {String symbol = 'btcusdt', String interval = '1d'}) async {
+      {String symbol = 'btcusdt', String interval = '1m'}) async {
     late String result;
     try {
       result =
@@ -187,13 +208,13 @@ class _MyHomePageState extends State<MyHomePage> {
         Map parseJson = json.decode(result);
         List list = parseJson['data'];
         datas = list
-            .map((item) => KLineEntity.fromJson(item))
+            .map((item) => KLineEntity.fromHuobi(item))
             .toList()
             .reversed
             .toList();
       } catch (e) {
         List parseJson = json.decode(result);
-        datas = parseJson.map((item) => KLineEntity.fromApi(item)).toList();
+        datas = parseJson.map((item) => KLineEntity.fromBinance(item)).toList();
       } finally {
         DataUtil.calculate(datas, maDayList: maDayList);
         showLoading = false;
@@ -203,7 +224,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<String> getIPAddress(String? period,
-      {String symbol = 'btcusdt', String interval = '1d'}) async {
+      {String symbol = 'btcusdt', String interval = '1m'}) async {
     //火币api，需要翻墙
     var houbi =
         'https://api.huobi.br.com/market/history/kline?period=${period ?? '1day'}&size=300&symbol=btcusdt';
