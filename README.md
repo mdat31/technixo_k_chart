@@ -36,7 +36,7 @@ Container(
     isLine: isLine,//是否显示折线图
     mainState: _mainState,//控制主视图指标线
     secondaryState: _secondaryState,//控制副视图指标线
-    volState: VolState.VOL,//控制成交量指标线
+    volHidden: true,// hide or show vol chart
     fractionDigits: 4,//保留小数位数
   ),
  )

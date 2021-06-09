@@ -46,7 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
   bool isLine = false;
   bool volHidden = true;
   List<DepthEntity> _bids = [], _asks = [];
-  List<int> maDayList = const [10, 100, 1000];
+  List<int> maDayList = const [7, 25, 100];
 
   final channel = WebSocketChannel.connect(
     Uri.parse('wss://fstream.binance.com/stream?streams=btcusdt@kline_1m'),
