@@ -73,8 +73,8 @@ abstract class BaseChartPainter extends CustomPainter {
       mFormats = [yy, '-', mm, '-', dd];
     //小时线等
     else
-      // mFormats = [mm, '-', dd, ' ', HH, ':', nn];
-      mFormats = [HH, ':', nn];
+      mFormats = [mm, '-', dd, ' ', HH, ':', nn];
+    // mFormats = [HH, ':', nn];
   }
 
   @override
