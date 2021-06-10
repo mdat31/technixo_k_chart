@@ -1,3 +1,6 @@
+## [0.0.3 + 1] 
+## - Fix: param model and entity to dynamic
+
 ## [0.0.3] 
 ## - TODO: Added k_line_model to get stream from binance api.
 ## - TODO: required maDayList in DataUtil.calculate.
