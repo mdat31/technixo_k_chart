@@ -49,6 +49,5 @@ class KLineModel with _$KLineModel {
     required String B,
   }) = _KLineModel;
 
-  factory KLineModel.fromJson(Map<String, dynamic> json) =>
-      _$KLineModelFromJson(json);
+  factory KLineModel.fromJson(dynamic json) => _$KLineModelFromJson(json);
 }

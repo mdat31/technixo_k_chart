@@ -27,7 +27,7 @@ class KLineEntity extends KEntity {
     id = (json['id'] as int? ?? 0) * 1000;
   }
 
-  KLineEntity.fromBinance(List<dynamic> data) {
+  KLineEntity.fromBinance(dynamic data) {
     id = (data[0] as int);
     open = double.parse(data[1]);
     high = double.parse(data[2]);
