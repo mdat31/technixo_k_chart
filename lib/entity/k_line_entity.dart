@@ -1,4 +1,5 @@
 import 'package:technixo_k_chart/model/k_line_model/k_line_model.dart';
+import 'package:technixo_k_chart/utils/n_interval.dart';
 
 import '../entity/k_entity.dart';
 
@@ -8,10 +9,12 @@ class KLineEntity extends KEntity {
   late double low;
   late double close;
   late double vol;
+  late NInterval interval;
   double? amount;
   int? count;
   int? id;
   int? closeTime;
+  int? startTime;
   double? takerBuyBaseVolume;
   double? takerBuyQuoteVolume;
   double? ignore;
@@ -50,6 +53,8 @@ class KLineEntity extends KEntity {
     close = double.parse(model.c);
     vol = double.parse(model.v);
     closeTime = model.T;
+    startTime = model.t;
+    interval = model.i.toNInterval;
     amount = double.parse(model.c);
     count = model.t;
     takerBuyBaseVolume = double.parse(model.V);
@@ -67,7 +72,9 @@ class KLineEntity extends KEntity {
     data['vol'] = this.vol;
     data['amount'] = this.amount;
     data['count'] = this.count;
+    data['interval'] = this.interval.value;
     data['closeTime'] = this.closeTime;
+    data['startTime'] = this.startTime;
     data['takerBuyBaseVolume'] = this.takerBuyBaseVolume;
     data['takerBuyQuoteVolume'] = this.takerBuyQuoteVolume;
     data['ignore'] = this.ignore;

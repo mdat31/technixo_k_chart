@@ -1,5 +1,10 @@
+## [0.0.4] 
+## - Todo: add NInterval enum and helpful extension
+## - Todo: add startTime to KLineEntity
+## - Todo: add example of add of update data
+
 ## [0.0.3 + 1] 
-## - Fix: param model and entity to dynamic
+## - Todo: param model and entity to dynamic
 
 ## [0.0.3] 
 ## - TODO: Added k_line_model to get stream from binance api.

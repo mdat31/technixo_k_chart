@@ -104,9 +104,14 @@ class _MyHomePageState extends State<MyHomePage> {
               final response = json.decode(snapshot.data);
               final model = KLineModel.fromJson(response['data']['k']);
               final entity = KLineEntity.fromModel(model);
-              debugPrint('${entity.toJson()}');
-              datas.last = entity;
-              DataUtil.updateLastData(datas, maDayList: maDayList);
+              final current = datas.last;
+              if (current.startTime != entity.startTime) {
+                print('### startTime != startTime');
+                datas.add(entity);
+              } else {
+                datas.last = entity;
+              }
+              DataUtil.calculate(datas, maDayList: maDayList);
             }
             return ListView(
               children: <Widget>[
@@ -157,7 +162,7 @@ class _MyHomePageState extends State<MyHomePage> {
           datas.last.close += (Random().nextInt(100) - 50).toDouble();
           datas.last.high = max(datas.last.high, datas.last.close);
           datas.last.low = min(datas.last.low, datas.last.close);
-          DataUtil.updateLastData(datas, maDayList: maDayList);
+          DataUtil.calculate(datas, maDayList: maDayList);
         }),
         button("addData", onPressed: () {
           //拷贝一个对象，修改数据
@@ -167,8 +172,7 @@ class _MyHomePageState extends State<MyHomePage> {
           kLineEntity.close += (Random().nextInt(100) - 50).toDouble();
           datas.last.high = max(datas.last.high, datas.last.close);
           datas.last.low = min(datas.last.low, datas.last.close);
-          debugPrint('### ${datas.last.toJson()}');
-          DataUtil.addLastData(datas, kLineEntity, maDayList: maDayList);
+          DataUtil.calculate(datas, maDayList: maDayList);
         }),
         TextButton(
             onPressed: () {

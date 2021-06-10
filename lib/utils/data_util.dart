@@ -263,30 +263,30 @@ class DataUtil {
     }
   }
 
-  //增量更新时计算最后一个数据
-  static addLastData(List<KLineEntity> dataList, KLineEntity data,
-      {required List<int> maDayList}) {
-    dataList.add(data);
-    _calcMA(dataList, isLast: true, maDayList: maDayList);
-    _calcBOLL(dataList, 20, 2, true);
-    _calcVolumeMA(dataList, true);
-    _calcKDJ(dataList, true);
-    _calcMACD(dataList, true);
-    _calcRSI(dataList, true);
-    _calcWR(dataList, true);
-    _calcCCI(dataList);
-  }
-
-  //更新最后一条数据
-  static updateLastData(List<KLineEntity> dataList,
-      {required List<int> maDayList}) {
-    _calcMA(dataList, isLast: true, maDayList: maDayList);
-    _calcBOLL(dataList, 20, 2, true);
-    _calcVolumeMA(dataList, true);
-    _calcKDJ(dataList, true);
-    _calcMACD(dataList, true);
-    _calcRSI(dataList, true);
-    _calcWR(dataList, true);
-    _calcCCI(dataList);
-  }
+// //增量更新时计算最后一个数据
+// static addLastData(List<KLineEntity> dataList, KLineEntity data,
+//     {required List<int> maDayList}) {
+//   dataList.add(data);
+//   _calcMA(dataList, isLast: true, maDayList: maDayList);
+//   _calcBOLL(dataList, 20, 2, true);
+//   _calcVolumeMA(dataList, true);
+//   _calcKDJ(dataList, true);
+//   _calcMACD(dataList, true);
+//   _calcRSI(dataList, true);
+//   _calcWR(dataList, true);
+//   _calcCCI(dataList);
+// }
+//
+// //更新最后一条数据
+// static updateLastData(List<KLineEntity> dataList,
+//     {required List<int> maDayList}) {
+//   _calcMA(dataList, isLast: true, maDayList: maDayList);
+//   _calcBOLL(dataList, 20, 2, true);
+//   _calcVolumeMA(dataList, true);
+//   _calcKDJ(dataList, true);
+//   _calcMACD(dataList, true);
+//   _calcRSI(dataList, true);
+//   _calcWR(dataList, true);
+//   _calcCCI(dataList);
+// }
 }
