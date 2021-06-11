@@ -1,3 +1,6 @@
+## [0.0.5] 
+## - Todo: add text center painter
+
 ## [0.0.4] 
 ## - Todo: add NInterval enum and helpful extension
 ## - Todo: add startTime to KLineEntity
