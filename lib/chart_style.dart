@@ -7,7 +7,7 @@ class ChartColors {
   Color gridColor = Color(0xff4c5c74);
   List<Color> kLineShadowColor = [
     Color(0x554C86CD),
-    Color(0x00000000)
+    Color(0x00000000),
   ]; //k线阴影渐变
   Color ma5Color = Color(0xffC9B885);
   Color ma10Color = Color(0xff6CB0A6);

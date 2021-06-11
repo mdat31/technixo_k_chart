@@ -44,7 +44,7 @@ class ChartPainter extends BaseChartPainter {
     this.maDayList = const [5, 10, 20],
   })  : assert(bgColor == null || bgColor.length >= 2),
         super(
-        chartStyle,
+          chartStyle,
           datas: datas,
           text: text,
           textStyle: textStyle,
@@ -469,8 +469,7 @@ class ChartPainter extends BaseChartPainter {
     final TextPainter tp =
         TextPainter(text: span, textDirection: TextDirection.ltr);
     tp.layout();
-    final Offset position =
-        Offset((size.width - tp.width) * 0.5, (size.height - tp.height) * 0.5);
+    final Offset position = Offset(0 + 10, size.height - tp.height - 22);
     tp.paint(canvas, position);
   }
 }

@@ -124,8 +124,11 @@ class _MyHomePageState extends State<MyHomePage> {
                       width: double.infinity,
                       child: KChartWidget(
                         datas,
-                        ChartColors()..kLineColor = Colors.red,
+                        ChartColors(),
                         ChartStyle(),
+                        text: 'Position',
+                        textStyle:
+                            TextStyle(fontSize: 30, color: Colors.white12),
                         isLine: isLine,
                         mainState: _mainState,
                         secondaryState: _secondaryState,
