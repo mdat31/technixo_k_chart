@@ -9,23 +9,29 @@ abstract class BaseChartRenderer<T> {
   late double scaleY, scaleX;
   double topPadding;
   Rect chartRect;
+  final ChartColors chartColors;
+  final ChartStyle chartStyle;
   final Paint chartPaint = Paint()
     ..isAntiAlias = true
     ..filterQuality = FilterQuality.high
     ..strokeWidth = 1.0
     ..color = Colors.red;
-  final Paint gridPaint = Paint()
-    ..isAntiAlias = true
-    ..filterQuality = FilterQuality.high
-    ..strokeWidth = 0.5
-    ..color = ChartColors.gridColor;
+  late final Paint gridPaint;
 
   BaseChartRenderer(
-      {required this.chartRect,
-      required this.maxValue,
-      required this.minValue,
-      required this.topPadding,
-      required this.scaleX}) {
+    this.chartColors,
+    this.chartStyle, {
+    required this.chartRect,
+    required this.maxValue,
+    required this.minValue,
+    required this.topPadding,
+    required this.scaleX,
+  }) {
+    gridPaint = Paint()
+      ..isAntiAlias = true
+      ..filterQuality = FilterQuality.high
+      ..strokeWidth = 0.5
+      ..color = chartColors.gridColor;
     if (maxValue == minValue) {
       maxValue += 0.5;
       minValue -= 0.5;
@@ -57,6 +63,6 @@ abstract class BaseChartRenderer<T> {
   }
 
   TextStyle getTextStyle(Color color) {
-    return TextStyle(fontSize: ChartStyle.defaultTextSize, color: color);
+    return TextStyle(fontSize: chartStyle.defaultTextSize, color: color);
   }
 }

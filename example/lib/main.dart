@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:technixo_k_chart/chart_style.dart';
 import 'package:technixo_k_chart/generated/l10n.dart' as k_chart;
 import 'package:technixo_k_chart/k_chart_widget.dart';
 import 'package:technixo_k_chart/model/k_line_model/k_line_model.dart';
@@ -106,7 +107,6 @@ class _MyHomePageState extends State<MyHomePage> {
               final entity = KLineEntity.fromModel(model);
               final current = datas.last;
               if (current.startTime != entity.startTime) {
-                print('### startTime != startTime');
                 datas.add(entity);
               } else {
                 datas.last = entity;
@@ -124,6 +124,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       width: double.infinity,
                       child: KChartWidget(
                         datas,
+                        ChartColors()..kLineColor = Colors.red,
+                        ChartStyle(),
                         isLine: isLine,
                         mainState: _mainState,
                         secondaryState: _secondaryState,

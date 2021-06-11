@@ -22,9 +22,13 @@ class KChartWidget extends StatefulWidget {
   final bool isLine;
   final List<int> maDayList;
   final List<Color>? bgColor;
+  final ChartColors chartColors;
+  final ChartStyle chartStyle;
 
   KChartWidget(
-    this.datas, {
+    this.datas,
+    this.chartColors,
+    this.chartStyle, {
     this.mainState = MainState.MA,
     this.volHidden = false,
     this.secondaryState = SecondaryState.MACD,
@@ -186,7 +190,11 @@ class _KChartWidgetState extends State<KChartWidget>
           CustomPaint(
             size: const Size(double.infinity, double.infinity),
             painter: ChartPainter(
+              widget.chartColors,
+              widget.chartStyle,
               datas: widget.datas,
+              text: 'Position',
+              textStyle: TextStyle(fontSize: 30, color: Colors.red),
               scaleX: mScaleX,
               scrollX: mScrollX,
               selectX: mSelectX,
@@ -202,7 +210,7 @@ class _KChartWidgetState extends State<KChartWidget>
               maDayList: widget.maDayList,
             ),
           ),
-          _buildInfoDialog()
+          _buildInfoDialog(),
         ],
       ),
     );
@@ -258,9 +266,9 @@ class _KChartWidgetState extends State<KChartWidget>
               margin: const EdgeInsets.only(left: 10, right: 10, top: 25),
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 7),
               decoration: BoxDecoration(
-                  color: ChartColors.markerBgColor,
+                  color: widget.chartColors.markerBgColor,
                   border: Border.all(
-                      color: ChartColors.markerBorderColor, width: 0.5)),
+                      color: widget.chartColors.markerBorderColor, width: 0.5)),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: List.generate(infoNames.length,
@@ -289,11 +297,12 @@ class _KChartWidgetState extends State<KChartWidget>
         children: <Widget>[
           Text("$infoName",
               style: TextStyle(
-                  color: Colors.white, fontSize: ChartStyle.defaultTextSize)),
+                  color: Colors.white,
+                  fontSize: widget.chartStyle.defaultTextSize)),
           SizedBox(width: 5),
           Text(info,
               style: TextStyle(
-                  color: color, fontSize: ChartStyle.defaultTextSize)),
+                  color: color, fontSize: widget.chartStyle.defaultTextSize)),
         ],
       ),
     );
