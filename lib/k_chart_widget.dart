@@ -24,11 +24,15 @@ class KChartWidget extends StatefulWidget {
   final List<Color>? bgColor;
   final ChartColors chartColors;
   final ChartStyle chartStyle;
+  final String text;
+  final TextStyle textStyle;
 
   KChartWidget(
     this.datas,
     this.chartColors,
     this.chartStyle, {
+    this.text = '',
+    this.textStyle = const TextStyle(),
     this.mainState = MainState.MA,
     this.volHidden = false,
     this.secondaryState = SecondaryState.MACD,
@@ -193,8 +197,8 @@ class _KChartWidgetState extends State<KChartWidget>
               widget.chartColors,
               widget.chartStyle,
               datas: widget.datas,
-              text: 'Position',
-              textStyle: TextStyle(fontSize: 30, color: Colors.red),
+              text: widget.text,
+              textStyle: widget.textStyle,
               scaleX: mScaleX,
               scrollX: mScrollX,
               selectX: mSelectX,
