@@ -1,3 +1,6 @@
+## [0.0.5+2]
+## - Todo: change text position
+
 ## [0.0.5] 
 ## - Todo: add text center painter
 
