@@ -16,11 +16,43 @@ enum NInterval {
   M_1,
 }
 
+enum MainState { MA, BOLL, NONE }
+
+enum SecondaryState { MACD, KDJ, RSI, WR, CCI, NONE }
+
 extension IntervalExt on NInterval {
   String get value => toString().split('.').last.split('_').reversed.join();
 }
 
+extension MainStateExt on MainState {
+  String get str => toString().split('.').last;
+}
+
+extension SecondaryStateExt on SecondaryState {
+  String get str => toString().split('.').last;
+}
+
 extension StringExt on String {
+  MainState get toMainState => this == MainState.NONE.str
+      ? MainState.NONE
+      : (this == MainState.MA.str
+          ? MainState.MA
+          : (this == MainState.BOLL.str)
+              ? MainState.BOLL
+              : MainState.NONE);
+
+  SecondaryState get toSecondaryState => this == SecondaryState.NONE.str
+      ? SecondaryState.NONE
+      : (this == SecondaryState.MACD.str
+          ? SecondaryState.MACD
+          : (this == SecondaryState.KDJ.str)
+              ? SecondaryState.KDJ
+              : (this == SecondaryState.WR.str)
+                  ? SecondaryState.WR
+                  : (this == SecondaryState.CCI.str)
+                      ? SecondaryState.CCI
+                      : SecondaryState.NONE);
+
   NInterval get toNInterval {
     switch (this) {
       case '1m':

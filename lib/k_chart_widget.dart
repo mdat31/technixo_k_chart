@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
 import 'package:technixo_k_chart/generated/l10n.dart';
+import 'package:technixo_k_chart/technixo_k_chart.dart';
 
 import 'chart_style.dart';
 import 'entity/info_window_entity.dart';
@@ -10,39 +11,6 @@ import 'entity/k_line_entity.dart';
 import 'renderer/chart_painter.dart';
 import 'utils/date_format_util.dart' hide S;
 import 'utils/number_util.dart';
-
-enum MainState { MA, BOLL, NONE }
-enum SecondaryState { MACD, KDJ, RSI, WR, CCI, NONE }
-
-extension MainStateExt on MainState {
-  String get str => toString().split('.').last;
-}
-
-extension SecondaryStateExt on SecondaryState {
-  String get str => toString().split('.').last;
-}
-
-extension StringExt on String {
-  MainState get toMainState => this == MainState.NONE.str
-      ? MainState.NONE
-      : (this == MainState.MA.str
-          ? MainState.MA
-          : (this == MainState.BOLL.str)
-              ? MainState.BOLL
-              : MainState.NONE);
-
-  SecondaryState get toSecondaryState => this == SecondaryState.NONE.str
-      ? SecondaryState.NONE
-      : (this == SecondaryState.MACD.str
-          ? SecondaryState.MACD
-          : (this == SecondaryState.KDJ.str)
-              ? SecondaryState.KDJ
-              : (this == SecondaryState.WR.str)
-                  ? SecondaryState.WR
-                  : (this == SecondaryState.CCI.str)
-                      ? SecondaryState.CCI
-                      : SecondaryState.NONE);
-}
 
 class KChartWidget extends StatefulWidget {
   final List<KLineEntity> datas;
