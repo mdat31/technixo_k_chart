@@ -14,6 +14,36 @@ import 'utils/number_util.dart';
 enum MainState { MA, BOLL, NONE }
 enum SecondaryState { MACD, KDJ, RSI, WR, CCI, NONE }
 
+extension MainStateExt on MainState {
+  String get str => toString().split('.').last;
+}
+
+extension SecondaryStateExt on SecondaryState {
+  String get str => toString().split('.').last;
+}
+
+extension StringExt on String {
+  MainState get toMainState => this == MainState.NONE.str
+      ? MainState.NONE
+      : (this == MainState.MA.str
+          ? MainState.MA
+          : (this == MainState.BOLL.str)
+              ? MainState.BOLL
+              : MainState.NONE);
+
+  SecondaryState get toSecondaryState => this == SecondaryState.NONE.str
+      ? SecondaryState.NONE
+      : (this == SecondaryState.MACD.str
+          ? SecondaryState.MACD
+          : (this == SecondaryState.KDJ.str)
+              ? SecondaryState.KDJ
+              : (this == SecondaryState.WR.str)
+                  ? SecondaryState.WR
+                  : (this == SecondaryState.CCI.str)
+                      ? SecondaryState.CCI
+                      : SecondaryState.NONE);
+}
+
 class KChartWidget extends StatefulWidget {
   final List<KLineEntity> datas;
   final MainState mainState;
