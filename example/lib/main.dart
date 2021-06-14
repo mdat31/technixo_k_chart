@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -56,7 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    getData('1day');
+    getData('1day', interval: '1d');
     rootBundle.loadString('assets/depth.json').then((result) {
       final parseJson = json.decode(result);
       Map tick = parseJson['tick'];
@@ -145,7 +144,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           child: CircularProgressIndicator()),
                   ],
                 ),
-                // buildButtons(),
+                buildButtons(),
                 // Container(
                 //   height: 230,
                 //   width: double.infinity,
@@ -162,31 +161,15 @@ class _MyHomePageState extends State<MyHomePage> {
       alignment: WrapAlignment.spaceEvenly,
       spacing: 5,
       children: <Widget>[
-        button("update", onPressed: () {
-          //更新最后一条数据
-          datas.last.close += (Random().nextInt(100) - 50).toDouble();
-          datas.last.high = max(datas.last.high, datas.last.close);
-          datas.last.low = min(datas.last.low, datas.last.close);
-          DataUtil.calculate(datas, maDayList: maDayList);
+        button("1m", onPressed: () {
+          getData('', interval: '1m');
         }),
-        button("addData", onPressed: () {
-          //拷贝一个对象，修改数据
-          var kLineEntity = KLineEntity.fromHuobi(datas.last.toJson());
-          kLineEntity.id = kLineEntity.id! + 60 * 60 * 24;
-          kLineEntity.open = kLineEntity.close;
-          kLineEntity.close += (Random().nextInt(100) - 50).toDouble();
-          datas.last.high = max(datas.last.high, datas.last.close);
-          datas.last.low = min(datas.last.low, datas.last.close);
-          DataUtil.calculate(datas, maDayList: maDayList);
+        button("1h", onPressed: () {
+          getData('', interval: '1h');
         }),
-        TextButton(
-            onPressed: () {
-              showLoading = true;
-              setState(() {});
-              getData('1day');
-            },
-            child: Text("1day", style: const TextStyle(color: Colors.black)),
-            style: TextButton.styleFrom(backgroundColor: Colors.blue)),
+        button("1d", onPressed: () {
+          getData('', interval: '1d');
+        }),
       ],
     );
   }

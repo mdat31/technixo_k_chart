@@ -27,11 +27,11 @@ class KLineEntity extends KEntity {
     vol = (json['vol'] as num).toDouble();
     amount = (json['amount'] as num?)?.toDouble();
     count = json['count'] as int?;
-    id = (json['id'] as int? ?? 0) * 1000;
+    id = json['id'] as int? ?? 0;
   }
 
   KLineEntity.fromBinance(dynamic data) {
-    id = (data[0] as int);
+    id = (data[0] as int) ~/ 1000;
     open = double.parse(data[1]);
     high = double.parse(data[2]);
     low = double.parse(data[3]);
