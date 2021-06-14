@@ -9,7 +9,7 @@ class KLineEntity extends KEntity {
   late double low;
   late double close;
   late double vol;
-  late NInterval interval;
+  NInterval? interval;
   double? amount;
   int? count;
   int? id;
@@ -72,7 +72,7 @@ class KLineEntity extends KEntity {
     data['vol'] = this.vol;
     data['amount'] = this.amount;
     data['count'] = this.count;
-    data['interval'] = this.interval.value;
+    data['interval'] = this.interval?.value;
     data['closeTime'] = this.closeTime;
     data['startTime'] = this.startTime;
     data['takerBuyBaseVolume'] = this.takerBuyBaseVolume;
