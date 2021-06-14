@@ -9,12 +9,13 @@ class KLineEntity extends KEntity {
   late double low;
   late double close;
   late double vol;
-  NInterval? interval;
   double? amount;
   int? count;
   int? id;
+
   int? closeTime;
   int? startTime;
+  NInterval? interval;
   double? takerBuyBaseVolume;
   double? takerBuyQuoteVolume;
   double? ignore;
@@ -46,7 +47,7 @@ class KLineEntity extends KEntity {
   }
 
   KLineEntity.fromModel(KLineModel model) {
-    id = model.t;
+    id = model.t ~/ 1000;
     open = double.parse(model.o);
     high = double.parse(model.h);
     low = double.parse(model.l);

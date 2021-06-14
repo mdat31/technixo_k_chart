@@ -310,8 +310,7 @@ class _KChartWidgetState extends State<KChartWidget>
     );
   }
 
-  String getDate(int date) {
-    return dateFormat(DateTime.fromMillisecondsSinceEpoch(date),
-        [yy, '-', mm, '-', dd, ' ', HH, ':', nn]);
-  }
+  String getDate(int date) => dateFormat(
+      DateTime.fromMillisecondsSinceEpoch(date * 1000),
+      [yy, '-', mm, '-', dd, ' ', HH, ':', nn]);
 }

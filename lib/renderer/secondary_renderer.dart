@@ -60,7 +60,6 @@ class SecondaryRenderer extends BaseChartRenderer<MACDEntity> {
           drawLine(lastPoint.r!, curPoint.r!, canvas, lastX, curX,
               chartColors.rsiColor);
         break;
-
       case SecondaryState.CCI:
         drawLine(lastPoint.cci!, curPoint.cci!, canvas, lastX, curX,
             chartColors.rsiColor);

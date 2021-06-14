@@ -15,8 +15,7 @@ class DataUtil {
     _calcCCI(dataList);
   }
 
-  static _calcMA(List<KLineEntity> dataList,
-      {bool isLast = false, required List<int> maDayList}) {
+  static _calcMA(List<KLineEntity> dataList, {required List<int> maDayList}) {
     List<double> ma = List<double>.filled(maDayList.length, 0);
 
     if (dataList.isNotEmpty) {
@@ -40,8 +39,7 @@ class DataUtil {
     }
   }
 
-  static void _calcBOLL(List<KLineEntity> dataList, int n, int k,
-      [bool isLast = false]) {
+  static void _calcBOLL(List<KLineEntity> dataList, int n, int k) {
     _calcBOLLMA(n, dataList);
     for (int i = 0; i < dataList.length; i++) {
       KLineEntity entity = dataList[i];
@@ -78,7 +76,7 @@ class DataUtil {
     }
   }
 
-  static void _calcMACD(List<KLineEntity> dataList, [bool isLast = false]) {
+  static void _calcMACD(List<KLineEntity> dataList) {
     double ema12 = 0;
     double ema26 = 0;
     double dif = 0;
@@ -109,7 +107,7 @@ class DataUtil {
     }
   }
 
-  static void _calcVolumeMA(List<KLineEntity> dataList, [bool isLast = false]) {
+  static void _calcVolumeMA(List<KLineEntity> dataList) {
     double volumeMa5 = 0;
     double volumeMa10 = 0;
 
@@ -139,7 +137,7 @@ class DataUtil {
     }
   }
 
-  static void _calcRSI(List<KLineEntity> dataList, [bool isLast = false]) {
+  static void _calcRSI(List<KLineEntity> dataList) {
     double? rsi;
     double rsiABSEma = 0;
     double rsiMaxEma = 0;
@@ -164,7 +162,7 @@ class DataUtil {
     }
   }
 
-  static void _calcKDJ(List<KLineEntity> dataList, [bool isLast = false]) {
+  static void _calcKDJ(List<KLineEntity> dataList) {
     double k = 0;
     double d = 0;
     for (int i = 0; i < dataList.length; i++) {
@@ -208,7 +206,7 @@ class DataUtil {
   }
 
   //WR(N) = 100 * [ HIGH(N)-C ] / [ HIGH(N)-LOW(N) ]
-  static void _calcWR(List<KLineEntity> dataList, [bool isLast = false]) {
+  static void _calcWR(List<KLineEntity> dataList) {
     double r;
     for (int i = 0; i < dataList.length; i++) {
       KLineEntity entity = dataList[i];
@@ -262,31 +260,4 @@ class DataUtil {
       }
     }
   }
-
-// //增量更新时计算最后一个数据
-// static addLastData(List<KLineEntity> dataList, KLineEntity data,
-//     {required List<int> maDayList}) {
-//   dataList.add(data);
-//   _calcMA(dataList, isLast: true, maDayList: maDayList);
-//   _calcBOLL(dataList, 20, 2, true);
-//   _calcVolumeMA(dataList, true);
-//   _calcKDJ(dataList, true);
-//   _calcMACD(dataList, true);
-//   _calcRSI(dataList, true);
-//   _calcWR(dataList, true);
-//   _calcCCI(dataList);
-// }
-//
-// //更新最后一条数据
-// static updateLastData(List<KLineEntity> dataList,
-//     {required List<int> maDayList}) {
-//   _calcMA(dataList, isLast: true, maDayList: maDayList);
-//   _calcBOLL(dataList, 20, 2, true);
-//   _calcVolumeMA(dataList, true);
-//   _calcKDJ(dataList, true);
-//   _calcMACD(dataList, true);
-//   _calcRSI(dataList, true);
-//   _calcWR(dataList, true);
-//   _calcCCI(dataList);
-// }
 }

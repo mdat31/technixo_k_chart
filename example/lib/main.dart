@@ -161,15 +161,10 @@ class _MyHomePageState extends State<MyHomePage> {
       alignment: WrapAlignment.spaceEvenly,
       spacing: 5,
       children: <Widget>[
-        button("1m", onPressed: () {
-          getData('', interval: '1m');
-        }),
-        button("1h", onPressed: () {
-          getData('', interval: '1h');
-        }),
-        button("1d", onPressed: () {
-          getData('', interval: '1d');
-        }),
+        button("1day", onPressed: () => getData('1day', interval: '1d')),
+        button("1month", onPressed: () => getData('1mon', interval: '1M')),
+        button("1hour", onPressed: () => getData('1hour', interval: '1h')),
+        button("4hour", onPressed: () => getData('4hour', interval: '4h')),
       ],
     );
   }
