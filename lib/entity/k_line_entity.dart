@@ -39,6 +39,7 @@ class KLineEntity extends KEntity {
     close = double.parse(data[4]);
     vol = double.parse(data[5]);
     closeTime = data[6] as int;
+    startTime = data[0] as int;
     amount = double.parse(data[7]);
     count = data[8] as int;
     takerBuyBaseVolume = double.parse(data[9]);
@@ -54,7 +55,7 @@ class KLineEntity extends KEntity {
     close = double.parse(model.c);
     vol = double.parse(model.v);
     closeTime = model.T;
-    startTime = model.t;
+    startTime = model.t ~/ 1000;
     interval = model.i.toNInterval;
     amount = double.parse(model.c);
     count = model.t;
