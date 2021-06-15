@@ -19,6 +19,7 @@ class KChartWidget extends StatefulWidget {
   final SecondaryState secondaryState;
   final bool isLine;
   final List<int> maDayList;
+  final List<int> emaDayList;
   final List<Color>? bgColor;
   final ChartColors chartColors;
   final ChartStyle chartStyle;
@@ -35,7 +36,8 @@ class KChartWidget extends StatefulWidget {
     this.volHidden = false,
     this.secondaryState = SecondaryState.MACD,
     this.isLine = false,
-    required this.maDayList,
+    this.maDayList = const [5, 10, 20],
+    this.emaDayList = const [5, 10, 20],
     this.bgColor,
     int fractionDigits = 2,
   }) {
@@ -122,6 +124,9 @@ class _KChartWidgetState extends State<KChartWidget>
 
   @override
   Widget build(BuildContext context) {
+    if (widget.datas.isNotEmpty) {
+      DataUtil.calculate(widget.datas, maDayList: widget.maDayList);
+    }
     if (widget.datas.isEmpty) {
       mScrollX = mSelectX = 0.0;
       mScaleX = 1.0;
@@ -142,7 +147,7 @@ class _KChartWidgetState extends State<KChartWidget>
         // isDrag = false;
         final Tolerance tolerance = Tolerance(
           velocity:
-              1.0 / (0.050 * WidgetsBinding.instance!.window.devicePixelRatio),
+          1.0 / (0.050 * WidgetsBinding.instance!.window.devicePixelRatio),
           // logical pixels per second
           distance: 1.0 /
               WidgetsBinding

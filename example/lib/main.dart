@@ -110,7 +110,6 @@ class _MyHomePageState extends State<MyHomePage> {
               } else {
                 datas.last = entity;
               }
-              DataUtil.calculate(datas, maDayList: maDayList);
             }
             return ListView(
               children: <Widget>[
@@ -203,7 +202,6 @@ class _MyHomePageState extends State<MyHomePage> {
         List parseJson = json.decode(result);
         datas = parseJson.map((item) => KLineEntity.fromBinance(item)).toList();
       } finally {
-        DataUtil.calculate(datas, maDayList: maDayList);
         showLoading = false;
         setState(() {});
       }
