@@ -11,6 +11,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
   MainState state;
   bool isLine;
   List<int> maDayList;
+  List<int> emaDayList;
   double _contentPadding = 12.0;
   final ChartColors chartColors;
   final ChartStyle chartStyle;
@@ -24,6 +25,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     this.isLine,
     double scaleX,
     this.maDayList,
+    this.emaDayList,
     this.chartColors,
     this.chartStyle,
   )   : mCandleWidth = chartStyle.candleWidth,
@@ -54,6 +56,8 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     TextSpan? span;
     if (state == MainState.MA) {
       span = TextSpan(children: _createMATextSpan(data));
+    } else if (state == MainState.EMA) {
+      span = TextSpan(children: _createEMATextSpan(data));
     } else if (state == MainState.BOLL) {
       span = TextSpan(
         children: [
@@ -96,6 +100,24 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     return result;
   }
 
+  List<InlineSpan> _createEMATextSpan(CandleEntity data) {
+    List<InlineSpan> result = [];
+    List<Color> listColors = [
+      chartColors.ma5Color,
+      chartColors.ma10Color,
+      chartColors.ma30Color,
+    ];
+    for (int i = 0; i < (data.emaValueList?.length ?? 0); i++) {
+      if (data.emaValueList?[i] != 0) {
+        var item = TextSpan(
+            text: "EMA(${emaDayList[i]}):${format(data.emaValueList![i])}    ",
+            style: getTextStyle(listColors[i]));
+        result.add(item);
+      }
+    }
+    return result;
+  }
+
   @override
   void drawChart(CandleEntity lastPoint, CandleEntity curPoint, double lastX,
       double curX, Size size, Canvas canvas) {
@@ -104,6 +126,8 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
       draLine(lastPoint.close, curPoint.close, canvas, lastX, curX);
     } else if (state == MainState.MA) {
       drawMaLine(lastPoint, curPoint, canvas, lastX, curX);
+    } else if (state == MainState.EMA) {
+      drawEMaLine(lastPoint, curPoint, canvas, lastX, curX);
     } else if (state == MainState.BOLL) {
       drawBollLine(lastPoint, curPoint, canvas, lastX, curX);
     }
@@ -163,6 +187,25 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
         drawLine(
             lastPoint.maValueList![i],
             curPoint.maValueList![i],
+            canvas,
+            lastX,
+            curX,
+            [
+              chartColors.ma5Color,
+              chartColors.ma10Color,
+              chartColors.ma30Color,
+            ][i]);
+      }
+    }
+  }
+
+  void drawEMaLine(CandleEntity lastPoint, CandleEntity curPoint, Canvas canvas,
+      double lastX, double curX) {
+    for (int i = 0; i < (curPoint.emaValueList?.length ?? 0); i++) {
+      if (lastPoint.emaValueList?[i] != 0) {
+        drawLine(
+            lastPoint.emaValueList![i],
+            curPoint.emaValueList![i],
             canvas,
             lastX,
             curX,

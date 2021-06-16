@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -24,15 +25,13 @@ class MyApp extends StatelessWidget {
       localizationsDelegates: [
         k_chart.S.delegate //国际话
       ],
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key? key, this.title}) : super(key: key);
-
-  final String? title;
+  MyHomePage({Key? key}) : super(key: key);
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -41,21 +40,22 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   List<KLineEntity> datas = [];
   bool showLoading = true;
-  MainState _mainState = MainState.MA;
+  MainState _mainState = MainState.EMA;
   SecondaryState _secondaryState = SecondaryState.NONE;
   bool isLine = false;
   bool volHidden = true;
   List<DepthEntity> _bids = [], _asks = [];
   List<int> maDayList = const [7, 25, 100];
+  List<int> emaDayList = const [7, 10, 15];
 
-  final channel = WebSocketChannel.connect(
-    Uri.parse('wss://fstream.binance.com/stream?streams=btcusdt@kline_1m'),
-  );
+  late WebSocketChannel channel;
+  Stream? stream;
 
   @override
   void initState() {
     super.initState();
-    getData('1day', interval: '1d');
+    getData('1mon', interval: '1M');
+
     rootBundle.loadString('assets/depth.json').then((result) {
       final parseJson = json.decode(result);
       Map tick = parseJson['tick'];
@@ -98,7 +98,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       backgroundColor: Color(0xff17212F),
       body: StreamBuilder<dynamic>(
-          stream: channel.stream,
+          stream: stream,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               final response = json.decode(snapshot.data);
@@ -133,6 +133,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         volHidden: volHidden,
                         fractionDigits: 2,
                         maDayList: maDayList,
+                        emaDayList: emaDayList,
                       ),
                     ),
                     if (showLoading)
@@ -163,6 +164,7 @@ class _MyHomePageState extends State<MyHomePage> {
         button("1day", onPressed: () => getData('1day', interval: '1d')),
         button("1month", onPressed: () => getData('1mon', interval: '1M')),
         button("1hour", onPressed: () => getData('1hour', interval: '1h')),
+        button("1m", onPressed: () => getData('1hour', interval: '1m')),
         button("4hour", onPressed: () => getData('4hour', interval: '4h')),
       ],
     );
@@ -185,7 +187,7 @@ class _MyHomePageState extends State<MyHomePage> {
     late String result;
     try {
       result =
-          await getIPAddress('$period', symbol: symbol, interval: interval);
+      await getIPAddress('$period', symbol: symbol, interval: interval);
     } catch (e) {
       print('Không lấy được data $e');
       result = await rootBundle.loadString('assets/kline.json');
@@ -203,6 +205,11 @@ class _MyHomePageState extends State<MyHomePage> {
         datas = parseJson.map((item) => KLineEntity.fromBinance(item)).toList();
       } finally {
         showLoading = false;
+        channel = WebSocketChannel.connect(
+          Uri.parse(
+              'wss://fstream.binance.com/stream?streams=btcusdt@kline_$interval'),
+        );
+        stream = channel.stream;
         setState(() {});
       }
     }
@@ -218,7 +225,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     String result;
     var response =
-        await http.get(Uri.parse(binance)).timeout(Duration(seconds: 7));
+    await http.get(Uri.parse(binance)).timeout(Duration(seconds: 7));
     if (response.statusCode == 200) {
       result = response.body;
     } else {

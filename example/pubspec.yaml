@@ -29,6 +29,8 @@ dependencies:
     path: ../
   # realtime stream channel
   web_socket_channel: ^2.1.0
+  # another chart
+  syncfusion_flutter_charts: ^19.1.69
 
 dev_dependencies:
   flutter_test:

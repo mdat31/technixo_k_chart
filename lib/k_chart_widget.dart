@@ -124,8 +124,13 @@ class _KChartWidgetState extends State<KChartWidget>
 
   @override
   Widget build(BuildContext context) {
+    final dataUtil = DataUtil(
+      maDayList: widget.maDayList,
+      emaDayList: widget.emaDayList,
+    );
+
     if (widget.datas.isNotEmpty) {
-      DataUtil.calculate(widget.datas, maDayList: widget.maDayList);
+      dataUtil.calculate(widget.datas);
     }
     if (widget.datas.isEmpty) {
       mScrollX = mSelectX = 0.0;
@@ -147,7 +152,7 @@ class _KChartWidgetState extends State<KChartWidget>
         // isDrag = false;
         final Tolerance tolerance = Tolerance(
           velocity:
-          1.0 / (0.050 * WidgetsBinding.instance!.window.devicePixelRatio),
+              1.0 / (0.050 * WidgetsBinding.instance!.window.devicePixelRatio),
           // logical pixels per second
           distance: 1.0 /
               WidgetsBinding
@@ -215,6 +220,7 @@ class _KChartWidgetState extends State<KChartWidget>
               controller: _controller,
               bgColor: widget.bgColor,
               maDayList: widget.maDayList,
+              emaDayList: widget.emaDayList,
             ),
           ),
           _buildInfoDialog(),

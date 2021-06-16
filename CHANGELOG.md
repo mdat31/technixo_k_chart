@@ -1,3 +1,6 @@
+## [0.0.6]
+## - Feat: Add EMA calculate and drawLine
+
 ## [0.0.5+3]
 ## - Todo: Add extension for MainState and SecondaryState
 

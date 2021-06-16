@@ -189,8 +189,11 @@ abstract class BaseChartPainter extends CustomPainter {
     } else {
       double maxPrice = item.high, minPrice = item.low;
       if (mainState == MainState.MA) {
-        maxPrice = max(item.high, _findMaxMA(item.maValueList ?? [0]));
-        minPrice = min(item.low, _findMinMA(item.maValueList ?? [0]));
+        maxPrice = max(item.high, _findMax(item.maValueList ?? [0]));
+        minPrice = min(item.low, _findMin(item.maValueList ?? [0]));
+      } else if (mainState == MainState.EMA) {
+        maxPrice = max(item.high, _findMax(item.emaValueList ?? [0]));
+        minPrice = min(item.low, _findMin(item.emaValueList ?? [0]));
       } else if (mainState == MainState.BOLL) {
         maxPrice = max(item.up ?? 0, item.high);
         minPrice = min(item.dn ?? 0, item.low);
@@ -209,20 +212,12 @@ abstract class BaseChartPainter extends CustomPainter {
     }
   }
 
-  double _findMaxMA(List<double> a) {
-    double result = double.minPositive;
-    for (double i in a) {
-      result = max(result, i);
-    }
-    return result;
+  double _findMax(List<double> a) {
+    return a.reduce((value, element) => max(value, element));
   }
 
-  double _findMinMA(List<double> a) {
-    double result = double.maxFinite;
-    for (double i in a) {
-      result = min(result, i == 0 ? double.maxFinite : i);
-    }
-    return result;
+  double _findMin(List<double> a) {
+    return a.reduce((value, element) => min(value, element));
   }
 
   void getVolMaxMinValue(KLineEntity item) {

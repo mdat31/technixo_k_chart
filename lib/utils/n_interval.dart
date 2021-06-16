@@ -16,7 +16,7 @@ enum NInterval {
   M_1,
 }
 
-enum MainState { MA, BOLL, NONE }
+enum MainState { MA, EMA, BOLL, NONE }
 
 enum SecondaryState { MACD, KDJ, RSI, WR, CCI, NONE }
 

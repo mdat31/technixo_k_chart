@@ -19,6 +19,7 @@ class ChartPainter extends BaseChartPainter {
   AnimationController? controller;
   double opacity;
   List<int> maDayList;
+  List<int> emaDayList;
   List<Color>? bgColor;
   final ChartColors chartColors;
   final ChartStyle chartStyle;
@@ -33,6 +34,8 @@ class ChartPainter extends BaseChartPainter {
     required selectX,
     required String text,
     required TextStyle textStyle,
+    required this.maDayList,
+    required this.emaDayList,
     mainState,
     volHidden,
     secondaryState,
@@ -41,7 +44,6 @@ class ChartPainter extends BaseChartPainter {
     this.controller,
     this.opacity = 0.0,
     this.bgColor,
-    this.maDayList = const [5, 10, 20],
   })  : assert(bgColor == null || bgColor.length >= 2),
         super(
           chartStyle,
@@ -69,6 +71,7 @@ class ChartPainter extends BaseChartPainter {
       isLine,
       scaleX,
       maDayList,
+      emaDayList,
       chartColors,
       chartStyle,
     );

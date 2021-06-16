@@ -10,6 +10,8 @@ mixin CandleEntity {
   double? MA30Price;
 
   List<double>? maValueList;
+  List<double>? emaValueList;
+
 //  上轨线
   double? up;
 

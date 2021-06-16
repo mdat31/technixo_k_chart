@@ -1,5 +1,6 @@
 library technixo_k_chart;
 
+export 'chart_style.dart';
 export 'depth_chart.dart';
 export 'entity/depth_entity.dart';
 export 'entity/k_line_entity.dart'; //数据
