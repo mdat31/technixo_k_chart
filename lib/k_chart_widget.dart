@@ -299,7 +299,7 @@ class _KChartWidgetState extends State<KChartWidget>
     else if (info.startsWith("-"))
       color = Colors.red;
     else
-      color = Colors.white;
+      color = widget.chartColors.maxMinTextColor;
     return Container(
       constraints: const BoxConstraints(
           minWidth: 95, maxWidth: 110, maxHeight: 14.0, minHeight: 14.0),
@@ -310,7 +310,7 @@ class _KChartWidgetState extends State<KChartWidget>
         children: <Widget>[
           Text("$infoName",
               style: TextStyle(
-                  color: Colors.white,
+                  color: widget.chartColors.maxMinTextColor,
                   fontSize: widget.chartStyle.defaultTextSize)),
           SizedBox(width: 5),
           Text(info,

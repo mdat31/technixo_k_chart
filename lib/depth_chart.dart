@@ -343,9 +343,11 @@ class DepthChartPainter extends CustomPainter {
 
   double getSellX(int position) => position * mSellPointWidth + mDrawWidth;
 
-  getTextPainter(String text, [Color color = Colors.white]) => TextPainter(
-      text:
-          TextSpan(text: "$text", style: TextStyle(color: color, fontSize: 10)),
+  getTextPainter(String text, [Color? color]) => TextPainter(
+      text: TextSpan(
+          text: "$text",
+          style: TextStyle(
+              color: color ?? chartColors.maxMinTextColor, fontSize: 10)),
       textDirection: TextDirection.ltr);
 
   double getBottomTextY(double textHeight) =>
