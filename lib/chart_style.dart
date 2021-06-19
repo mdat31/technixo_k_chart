@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart' show Color;
+import 'package:flutter/material.dart' show Color, Colors;
 
 class ChartColors {
   //背景颜色
@@ -49,6 +49,12 @@ class ChartColors {
 
   Color simpleLineUpColor = Color(0xff6CB0A6);
   Color simpleLineDnColor = Color(0xffC15466);
+
+  // InfoWindow
+  Color infoText = Color(0xff000000);
+  Color infoTitle = Color(0xff60738E);
+  Color yCrossLine = Colors.white12;
+  Color xCrossLine = Colors.white;
 }
 
 class ChartStyle {
@@ -68,7 +74,7 @@ class ChartStyle {
   double macdWidth = 3.0;
 
   //垂直交叉线宽度
-  double vCrossWidth = 8.5;
+  double vCrossWidth = 1.5;
 
   //水平交叉线宽度
   double hCrossWidth = 0.5;

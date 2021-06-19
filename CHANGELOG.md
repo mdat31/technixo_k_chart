@@ -1,3 +1,6 @@
+## [0.0.6+2]
+## - TODO: Add more custom color
+
 ## [0.0.6]
 ## - Feat: Add EMA calculate and drawLine
 

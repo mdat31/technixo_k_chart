@@ -206,7 +206,7 @@ class ChartPainter extends BaseChartPainter {
     KLineEntity point = getItem(index);
 
     TextPainter tp =
-        getTextPainter(format(point.close), color: chartColors.maxMinTextColor);
+        getTextPainter(format(point.close), color: chartColors.infoText);
     double textHeight = tp.height;
     double textWidth = tp.width;
 
@@ -245,7 +245,7 @@ class ChartPainter extends BaseChartPainter {
     }
 
     TextPainter dateTp =
-        getTextPainter(getDate(point.id!), color: chartColors.maxMinTextColor);
+        getTextPainter(getDate(point.id!), color: chartColors.infoText);
     textWidth = dateTp.width;
     r = textHeight / 2;
     x = translateXtoX(getX(index));
@@ -319,7 +319,7 @@ class ChartPainter extends BaseChartPainter {
     var index = calculateSelectedX(selectX);
     KLineEntity point = getItem(index);
     Paint paintY = Paint()
-      ..color = Colors.white12
+      ..color = chartColors.yCrossLine
       ..strokeWidth = chartStyle.vCrossWidth
       ..isAntiAlias = true;
     double x = getX(index);
@@ -329,7 +329,7 @@ class ChartPainter extends BaseChartPainter {
         Offset(x, size.height - chartStyle.bottomDateHigh), paintY);
 
     Paint paintX = Paint()
-      ..color = Colors.white
+      ..color = chartColors.xCrossLine
       ..strokeWidth = chartStyle.hCrossWidth
       ..isAntiAlias = true;
     // k线图横线
